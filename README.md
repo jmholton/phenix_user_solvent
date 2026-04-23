@@ -59,6 +59,17 @@ For a simple single-chain structure the two models give essentially
 identical results. The benefit is larger for the multi-conformer crystal
 form, where the flat-mask approximation is less accurate.
 
+## Applying the patch
+
+From the `site-packages` directory of your phenix installation:
+
+```bash
+cd /path/to/phenix/lib/python3.9/site-packages
+patch -p0 < f_model.patch
+patch -p0 < phenix_refine.patch
+patch -p0 < __init__.params.patch
+```
+
 ## Implementation notes
 
 The user-supplied MTZ columns are read once in `validate()`, mapped to ASU,
