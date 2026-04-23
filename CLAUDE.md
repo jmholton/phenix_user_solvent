@@ -3,12 +3,15 @@
 Feature branch adding user-supplied bulk solvent map support to phenix.refine.
 Changes are applied to `/programs/phenix-2.1rc2-6037/` (writable).
 
+**Important:** The default `phenix.refine` in PATH is version 2.0-5936 (unmodified).
+Always use `/programs/phenix-2.1rc2-6037/bin/phenix.refine` to run the patched version.
+
 ## What was changed and why
 
-Three files in the phenix-2.1rc2-6037 installation were modified:
+Four changes in the phenix-2.1rc2-6037 installation:
 
 **`lib/python3.9/site-packages/phenix/refinement/__init__.params`**
-Added `refinement.input.bulk_solvent_map` scope with three parameters:
+Added `refinement.input.bulk_solvent_map` scope inside existing `input { }` scope:
 `file_name`, `amplitudes_label` (default `FPART`), `phases_label` (default `PHIPART`).
 
 **`lib/python3.9/site-packages/phenix/programs/phenix_refine.py`**
@@ -22,7 +25,7 @@ then uses `miller.match_indices` to build a new complex array with exactly
 `f_obs`'s index set and ordering. Missing reflections get zero amplitude.
 Calls `fmodel.set_user_f_masks([f_mask])`.
 
-**`lib/python3.9/site-packages/mmtbx/f_model/f_model.py`**
+**`lib/python3.9/site-packages/mmtbx/f_model/f_model.py`** (three changes):
 - Added `self._user_f_masks = None` in `manager.__init__`
 - Added `manager.set_user_f_masks(f_masks)` method just before `update_xray_structure`
 - In `update_xray_structure`, when `update_f_mask=True` and `_user_f_masks` is set,
@@ -44,27 +47,53 @@ Calls `fmodel.set_user_f_masks([f_mask])`.
   removal silently resets `_user_f_masks` to `None` and the flat mask is
   recomputed during the LBFGS coordinate minimisation, wrecking refinement.
 
+## Bug hunt: why did final R-factors converge?
+
+Symptom: the user mask gave much better post-BSS R-work (0.1087 vs 0.1768)
+but final R-factors were nearly identical between user and default runs.
+
+Root cause: `f_model_all_scales.run.compute()` calls `remove_outliers()` five
+times before fitting k_sol/B_sol. `remove_outliers()` calls
+`self.select(selection, in_place=True)`. `select(in_place=True)` creates a new
+`manager` via `__init__` (setting `_user_f_masks = None`), then copies ALL its
+attributes back to `self` via dict iteration — wiping `_user_f_masks`. The
+subsequent `update_xray_structure(update_f_mask=True)` then recomputed the
+flat mask from the atomic model. The k_sol/B_sol were then fit to the flat mask,
+not the user mask, so coordinate refinement diverged and reached the same final
+R as the default run.
+
 ## Testing
 
-Test files in cwd: `1aho.pdb`, `1aho.mtz`, `solvent_Fpart.mtz`
-The solvent MTZ has columns `Fpart` (F type) and `PHIpart` (P type).
-
-Quick test command (no RSR, 1 cycle):
+**Quick test (1aho, small, ~30 s):**
 ```
-phenix.refine 1aho.pdb 1aho.mtz \
-  refinement.input.bulk_solvent_map.file_name=solvent_Fpart.mtz \
+/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+  example/1aho.pdb example/1aho.mtz \
+  refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
   refinement.main.number_of_macro_cycles=1 \
   "refinement.refine.strategy=individual_sites individual_adp occupancies" \
   output.prefix=test_1aho --overwrite
 ```
+Expected: R-work ~0.151, R-free ~0.147.
 
-Expected: R-work ~0.151, R-free ~0.147 after 1 cycle.
-
-The big ensemble test (48 copies, 45762 atoms, ~25 GB RAM, slow):
+**Large ensemble test (evenmoreconf.pdb, ~5 min):**
 ```
-phenix.refine refmacout_minRfree.pdb refme_minRfree.mtz \
+/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+  evenmoreconf.pdb refme_minRfree.mtz \
+  refinement.input.bulk_solvent_map.file_name=solvent_Fpart.mtz \
+  refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
+  refinement.input.bulk_solvent_map.phases_label=PHIpart \
+  refinement.main.number_of_macro_cycles=1 \
+  "refinement.refine.strategy=individual_sites individual_adp occupancies" \
+  output.prefix=test_emc --overwrite
+```
+Expected: Final R-work ~0.108, R-free ~0.119 (vs default ~0.177).
+
+**Very large ensemble test (48 copies, 45762 atoms, ~25 GB RAM, slow):**
+```
+/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+  refmacout_minRfree.pdb refme_minRfree.mtz \
   refinement.input.bulk_solvent_map.file_name=refme_minRfree.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
@@ -72,8 +101,6 @@ phenix.refine refmacout_minRfree.pdb refme_minRfree.mtz \
   "refinement.refine.strategy=individual_sites individual_adp occupancies" \
   output.prefix=test_usermap --overwrite
 ```
-
-Expected: Final R-work ~0.146, R-free ~0.156.
 
 ## Known limitations
 
