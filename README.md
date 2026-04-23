@@ -59,7 +59,14 @@ phenix.refine \
 | | R-work | R-free |
 |---|---|---|
 | Input | 0.165 | 0.160 |
-| After 1 cycle | 0.151 | 0.147 |
+| 1 cycle, default bulk solvent | 0.151 | 0.147 |
+| 1 cycle, ensemble solvent (Fpart/PHIpart) | 0.151 | 0.147 |
+
+For this single-chain structure the two bulk solvent models give essentially
+identical results. The benefit of a user-supplied model is expected to be
+larger for complex crystal forms — such as large ensembles or structures
+with unusual solvent content — where the flat-mask approximation is less
+accurate.
 
 ## Implementation notes
 

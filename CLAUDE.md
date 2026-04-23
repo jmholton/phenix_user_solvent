@@ -27,6 +27,9 @@ Calls `fmodel.set_user_f_masks([f_mask])`.
 - Added `manager.set_user_f_masks(f_masks)` method just before `update_xray_structure`
 - In `update_xray_structure`, when `update_f_mask=True` and `_user_f_masks` is set,
   uses the stored masks instead of calling `mask_manager.shell_f_masks()`
+- In `manager.select()`, propagate `_user_f_masks` (selecting the same reflections)
+  so that outlier removal (`remove_outliers` → `select(in_place=True)`) does not
+  silently reset `_user_f_masks` to `None`
 
 ## Key design decisions
 
@@ -36,6 +39,10 @@ Calls `fmodel.set_user_f_masks([f_mask])`.
 - Index alignment uses `match_indices` not `common_set` — the latter gives
   wrong ordering. The root cause of the initial AssertionError was an
   ASU ordering mismatch, not a resolution gap.
+- `_user_f_masks` must be propagated through `manager.select()` (including the
+  `in_place=True` path used by `remove_outliers`). Without this fix, outlier
+  removal silently resets `_user_f_masks` to `None` and the flat mask is
+  recomputed during the LBFGS coordinate minimisation, wrecking refinement.
 
 ## Testing
 
