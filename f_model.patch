@@ -1,5 +1,5 @@
---- /programs/phenix-duplicate/lib/python3.9/site-packages/mmtbx/f_model/f_model.py	2026-04-19 20:13:37.000000000 -0700
-+++ /programs/phenix-2.1rc2-6037/lib/python3.9/site-packages/mmtbx/f_model/f_model.py	2026-04-22 19:54:08.834720119 -0700
+--- mmtbx/f_model/f_model.py
++++ mmtbx/f_model/f_model.py
 @@ -375,6 +375,7 @@
      self._origin = origin
      self._data_type = data_type
