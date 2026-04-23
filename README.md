@@ -45,19 +45,19 @@ the same file as the data MTZ if the columns are present there.
 
 See `example/README.txt`. The solvent model in `example/solvent_Fpart.mtz`
 was computed by Refmac using a 48-copy ensemble of the same crystal.
-Refining the single-chain 1AHO model (1 macro cycle, no RSR):
+Results after 1 macro cycle (no RSR):
 
-| | R-work | R-free |
-|---|---|---|
-| Input | 0.152 | 0.146 |
-| Default bulk solvent | 0.151 | 0.147 |
-| Ensemble solvent (Fpart/PHIpart) | 0.151 | 0.146 |
+| Structure | Bulk solvent | R-work | R-free |
+|---|---|---|---|
+| 1AHO (single chain) | Input | 0.152 | 0.146 |
+| 1AHO (single chain) | Default (flat mask) | 0.151 | 0.147 |
+| 1AHO (single chain) | Ensemble Fpart/PHIpart | 0.151 | 0.146 |
+| Multi-conf | Default (flat mask) | 0.177 | 0.180 |
+| Multi-conf | Ensemble Fpart/PHIpart | **0.108** | **0.119** |
 
-For this simple single-chain structure the two bulk solvent models give
-essentially identical results. The benefit of a user-supplied model is
-expected to be larger for complex crystal forms — such as large ensembles
-or structures with unusual solvent content — where the flat-mask
-approximation is less accurate.
+For a simple single-chain structure the two models give essentially
+identical results. The benefit is larger for the multi-conformer crystal
+form, where the flat-mask approximation is less accurate.
 
 ## Implementation notes
 
