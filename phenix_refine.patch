@@ -1,0 +1,62 @@
+--- /programs/phenix-duplicate/lib/python3.9/site-packages/phenix/programs/phenix_refine.py	2026-04-19 20:10:41.000000000 -0700
++++ /programs/phenix-2.1rc2-6037/lib/python3.9/site-packages/phenix/programs/phenix_refine.py	2026-04-22 11:34:14.839883824 -0700
+@@ -22,6 +22,48 @@
+ import phenix.refinement.fmodels
+ 
+ 
++def _inject_user_bulk_solvent(fmodel, params, log):
++  """Read user-supplied bulk solvent structure factors from an MTZ file and
++  inject them into fmodel, replacing the internally computed flat mask."""
++  if params.file_name is None:
++    return
++  import iotbx.mtz
++  import math
++  mtz_obj = iotbx.mtz.object(file_name=params.file_name)
++  ma_list = mtz_obj.as_miller_arrays()
++  amp_array = None
++  phi_array = None
++  for ma in ma_list:
++    if params.amplitudes_label in ma.info().labels:
++      amp_array = ma
++    if params.phases_label in ma.info().labels:
++      phi_array = ma
++  if amp_array is None:
++    raise Sorry(
++      "Column '%s' not found in %s" % (params.amplitudes_label, params.file_name))
++  if phi_array is None:
++    raise Sorry(
++      "Column '%s' not found in %s" % (params.phases_label, params.file_name))
++  f_complex = amp_array.phase_transfer(phase_source=phi_array, deg=True)
++  f_complex = f_complex.map_to_asu()
++  # Re-express on exactly f_obs's index set (same indices, same canonical order).
++  # Uses match_indices so the result satisfies f_calc.indices().all_eq(fm.indices()).
++  # Any f_obs reflections absent from the user map get zero contribution.
++  from cctbx import miller as cctbx_miller
++  from cctbx.array_family import flex
++  f_obs = fmodel.f_obs()
++  zero_data = flex.complex_double(f_obs.indices().size(), 0+0j)
++  match = cctbx_miller.match_indices(f_obs.indices(), f_complex.indices())
++  for i_fobs, i_user in match.pairs():
++    zero_data[i_fobs] = f_complex.data()[i_user]
++  f_mask = f_obs.array(data=zero_data)
++  fmodel.set_user_f_masks([f_mask])
++  print("Using user-supplied bulk solvent map from: %s" % params.file_name,
++    file=log)
++  print("  amplitude column: %s   phase column: %s" % (
++    params.amplitudes_label, params.phases_label), file=log)
++
++
+ # logic for handling the default behavior for
+ #
+ #   phenix.refine <model file> <data file>
+@@ -405,6 +447,10 @@
+         scattering_table           = rp.main.scattering_table,
+         free_r_flags_scope = 'miller_array.labels.name')
+       self.fmodel.update(mask_params = rp.mask)
++      _inject_user_bulk_solvent(
++        fmodel = self.fmodel,
++        params = rp.input.bulk_solvent_map,
++        log    = self.log)
+     else:
+       rp = self.params.xray.refinement
+       sf_accuracy_params = rp.structure_factors_and_gradients_accuracy

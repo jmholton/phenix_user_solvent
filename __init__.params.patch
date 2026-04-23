@@ -1,0 +1,32 @@
+--- /programs/phenix-duplicate/lib/python3.9/site-packages/phenix/refinement/__init__.params	2026-04-19 20:10:41.000000000 -0700
++++ /programs/phenix-2.1rc2-6037/lib/python3.9/site-packages/phenix/refinement/__init__.params	2026-04-21 21:34:48.641836368 -0700
+@@ -28,6 +28,29 @@
+       .type=choice
+       .expert_level=2
+       .help=Check for consistency of crystal symmetry from model and data files
++  bulk_solvent_map
++    .help = User-supplied bulk solvent structure factors from an MTZ file. \
++            When provided, these replace the internally computed flat (0/1) \
++            mask used in the bulk solvent model \
++            F_bulk = k_sol * exp(-B_sol * s^2/4) * F_mask. \
++            Equivalent to FPART/PHIPART in Refmac.
++  {
++    file_name = None
++      .type = path
++      .short_caption = Bulk solvent MTZ file
++      .help = MTZ file containing amplitude and phase columns for the \
++              user-supplied bulk solvent electron density.
++    amplitudes_label = FPART
++      .type = str
++      .short_caption = Amplitude column label
++      .help = Column label for structure factor amplitudes in the bulk \
++              solvent MTZ file.
++    phases_label = PHIPART
++      .type = str
++      .short_caption = Phase column label
++      .help = Column label for phases (in degrees) in the bulk solvent \
++              MTZ file.
++  }
+   }
+   output
+     .help=Scope for output files
