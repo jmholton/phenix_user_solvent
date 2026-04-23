@@ -32,7 +32,7 @@ defined than the flat-mask approximation.
 ## Usage
 
 ```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine model.pdb data.mtz \
+phenix.refine model.pdb data.mtz \
   refinement.input.bulk_solvent_map.file_name=solvent.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart
@@ -45,39 +45,19 @@ the same file as the data MTZ if the columns are present there.
 
 See `example/README.txt`. The solvent model in `example/solvent_Fpart.mtz`
 was computed by Refmac using a 48-copy ensemble of the same crystal.
-Refining the single-chain 1AHO model against the ensemble solvent:
-
-```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine \
-  example/1aho.pdb \
-  example/1aho.mtz \
-  refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
-  refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
-  refinement.input.bulk_solvent_map.phases_label=PHIpart
-```
+Refining the single-chain 1AHO model (1 macro cycle, no RSR):
 
 | | R-work | R-free |
 |---|---|---|
-| Input | 0.165 | 0.160 |
-| 1 cycle, default bulk solvent | 0.151 | 0.147 |
-| 1 cycle, ensemble solvent (Fpart/PHIpart) | 0.151 | 0.147 |
+| Input | 0.152 | 0.146 |
+| Default bulk solvent | 0.151 | 0.147 |
+| Ensemble solvent (Fpart/PHIpart) | 0.151 | 0.146 |
 
-For this simple single-chain structure both bulk solvent models give
+For this simple single-chain structure the two bulk solvent models give
 essentially identical results. The benefit of a user-supplied model is
-larger for complex crystal forms — as shown below.
-
-## Larger example: evenmoreconf.pdb (48-copy ensemble)
-
-Testing against `evenmoreconf.pdb` with the ensemble-derived solvent
-model in `refme_minRfree.mtz`:
-
-| | Final R-work | Final R-free |
-|---|---|---|
-| Default bulk solvent (flat mask) | 0.1768 | 0.1795 |
-| Ensemble solvent (Fpart/PHIpart) | **0.1084** | **0.1185** |
-
-The ensemble bulk solvent model gives a dramatically better result for
-this multi-conformer, high-solvent-content crystal form.
+expected to be larger for complex crystal forms — such as large ensembles
+or structures with unusual solvent content — where the flat-mask
+approximation is less accurate.
 
 ## Implementation notes
 
@@ -89,15 +69,6 @@ at least the resolution of the data). The aligned complex Miller array is
 stored as `fmodel._user_f_masks` and used in place of the mask-manager
 output for the lifetime of the run.
 
-### Bug fixed: outlier removal was silently wiping the user mask
-
-`manager.select(in_place=True)` — called five times per scaling cycle by
-`remove_outliers()` — creates a fresh `manager` object (where `__init__`
-sets `_user_f_masks = None`) then copies all its attributes back to `self`.
-This silently reset the user mask before every LBFGS coordinate
-minimisation step, causing the flat mask to be recomputed from the atomic
-model and refinement to diverge.
-
-Fix: `select()` now propagates `_user_f_masks`, applying the same
-reflection selection so the surviving mask indices match the surviving
-`f_obs` indices.
+`_user_f_masks` is propagated through `manager.select()` so that outlier
+removal does not silently reset it to `None` at the start of each scaling
+cycle.
