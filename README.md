@@ -5,17 +5,20 @@ Adds support for a user-supplied bulk solvent electron density map to
 
 ## Motivation
 
-`phenix.refine` currently models bulk solvent by computing a flat (0/1)
-mask from the atomic model and scaling it:
+`phenix.refine` models the total structure factor as (Afonine et al., 2013):
 
 ```
-F_bulk = k_sol * exp(-B_sol * s^2/4) * F_mask
+F_model = k_total * (F_calc + k_mask * F_mask)
 ```
+
+where `F_mask` is computed from a flat (0/1) solvent mask derived from the
+atomic model, and `k_mask` is a resolution-dependent scale factor determined
+analytically per resolution bin.
 
 This patch allows the user to supply their own bulk solvent structure
 factors (amplitude + phase columns from an MTZ file) in place of `F_mask`.
-`k_sol` and `B_sol` continue to refine against the user-supplied map.
-The mask is not recomputed from the atomic model during refinement.
+`k_mask` continues to be determined analytically against the user-supplied
+map. The mask is not recomputed from the atomic model during refinement.
 
 A key use case is supplying a bulk solvent model computed from an ensemble
 or explicit-solvent MD simulation, where the solvent structure is better
@@ -83,3 +86,9 @@ output for the lifetime of the run.
 `_user_f_masks` is propagated through `manager.select()` so that outlier
 removal does not silently reset it to `None` at the start of each scaling
 cycle.
+
+## Reference
+
+Afonine, P. V., Grosse-Kunstleve, R. W., Adams, P. D. & Urzhumtsev, A. (2013).
+*Acta Cryst.* D**69**, 625–634.
+https://doi.org/10.1107/S0907444913000462
