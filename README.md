@@ -23,11 +23,11 @@ defined than the flat-mask approximation.
 
 ## Files changed
 
-| File | Repo | Change |
-|---|---|---|
-| `phenix/refinement/__init__.params` | phenix | New `refinement.input.bulk_solvent_map` PHIL scope |
-| `phenix/programs/phenix_refine.py` | phenix | `_inject_user_bulk_solvent()` helper; called in `validate()` |
-| `mmtbx/f_model/f_model.py` | cctbx_project | `set_user_f_masks()` method; guard in `update_xray_structure()`; propagation through `select()` |
+| File | Repo | Lines | Change |
+|---|---|---|---|
+| `phenix/refinement/__init__.params` | phenix | +23 | New `refinement.input.bulk_solvent_map` PHIL scope |
+| `phenix/programs/phenix_refine.py` | phenix | +46 | `_inject_user_bulk_solvent()` helper; called in `validate()` |
+| `mmtbx/f_model/f_model.py` | cctbx_project | +25 −12 | `set_user_f_masks()` method; guard in `update_xray_structure()`; propagation through `select()` |
 
 ## Usage
 
