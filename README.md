@@ -13,7 +13,7 @@ F_model = k_total * (F_calc + k_mask * F_mask)
 
 where `F_mask` is computed from a flat (0/1) solvent mask derived from the
 atomic model, and `k_mask` is a resolution-dependent scale factor determined
-analytically per resolution bin.
+analytically per resolution bin ([Afonine et al., 2013](https://doi.org/10.1107/S0907444913000462)).
 
 This patch allows the user to supply their own bulk solvent structure
 factors (amplitude + phase columns from an MTZ file) in place of `F_mask`.
