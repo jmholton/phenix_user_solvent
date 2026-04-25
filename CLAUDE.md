@@ -37,7 +37,9 @@ Calls `fmodel.set_user_f_masks([f_mask])`.
 ## Key design decisions
 
 - The user map **replaces** the flat 0/1 mask entirely; there is no hybrid fallback
-- `k_sol` and `B_sol` still refine (they scale the user-supplied F_mask)
+- `k_mask` continues to be determined analytically per resolution bin (Afonine et al. 2013,
+  https://doi.org/10.1107/S0907444913000462) — the old exponential `k_sol*exp(-B_sol*s²/4)`
+  is not what phenix actually uses
 - The mask is frozen for the entire run (not recomputed as atoms move)
 - Index alignment uses `match_indices` not `common_set` — the latter gives
   wrong ordering. The root cause of the initial AssertionError was an
@@ -53,12 +55,12 @@ Symptom: the user mask gave much better post-BSS R-work (0.1087 vs 0.1768)
 but final R-factors were nearly identical between user and default runs.
 
 Root cause: `f_model_all_scales.run.compute()` calls `remove_outliers()` five
-times before fitting k_sol/B_sol. `remove_outliers()` calls
+times before fitting k_mask. `remove_outliers()` calls
 `self.select(selection, in_place=True)`. `select(in_place=True)` creates a new
 `manager` via `__init__` (setting `_user_f_masks = None`), then copies ALL its
 attributes back to `self` via dict iteration — wiping `_user_f_masks`. The
 subsequent `update_xray_structure(update_f_mask=True)` then recomputed the
-flat mask from the atomic model. The k_sol/B_sol were then fit to the flat mask,
+flat mask from the atomic model. k_mask was then fit to the flat mask,
 not the user mask, so coordinate refinement diverged and reached the same final
 R as the default run.
 
