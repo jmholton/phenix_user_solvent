@@ -1,0 +1,17 @@
+*.cif
+*.eff
+*.geo
+*.def
+*.mtz.bak
+*_data.mtz
+*_refine_*
+absolute_scale.mtz
+cadded.mtz
+scaleited.mtz
+Fdiff.*
+diff_details.log
+multiconf.*
+moreconf.*
+evenmoreconf_refine_*
+evenmoreconf.log
+refme_minRfree.mtz

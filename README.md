@@ -47,20 +47,22 @@ the same file as the data MTZ if the columns are present there.
 ## Example
 
 See `example/README.txt`. The solvent model in `example/solvent_Fpart.mtz`
-was computed by Refmac using a 48-copy ensemble of the same crystal.
-Results after 1 macro cycle (no RSR):
+was computed by Refmac from an ensemble model of the same crystal.
+Refining `example/evenmoreconf.pdb` (1 macro cycle, no RSR):
 
-| Structure | Bulk solvent | R-work | R-free |
-|---|---|---|---|
-| 1AHO (single chain) | Input | 0.152 | 0.146 |
-| 1AHO (single chain) | Default (flat mask) | 0.151 | 0.147 |
-| 1AHO (single chain) | Ensemble Fpart/PHIpart | 0.151 | 0.146 |
-| Multi-conf | Default (flat mask) | 0.177 | 0.180 |
-| Multi-conf | Ensemble Fpart/PHIpart | **0.108** | **0.119** |
+```
+phenix.refine \
+  example/evenmoreconf.pdb \
+  example/refme.mtz \
+  refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
+  refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
+  refinement.input.bulk_solvent_map.phases_label=PHIpart
+```
 
-For a simple single-chain structure the two models give essentially
-identical results. The benefit is larger for the multi-conformer crystal
-form, where the flat-mask approximation is less accurate.
+| Bulk solvent | R-work | R-free |
+|---|---|---|
+| Default (flat mask) | 0.177 | 0.180 |
+| Ensemble Fpart/PHIpart | **0.108** | **0.119** |
 
 ## Applying the patch
 
