@@ -104,7 +104,46 @@ Expected: Final R-work ~0.108, R-free ~0.119 (vs default ~0.177).
   output.prefix=test_usermap --overwrite
 ```
 
+## ADP refinement pathology for high-copy ensembles
+
+For multi-conformer / high-copy ensemble structures refined with a user-supplied
+bulk solvent map, **ADP (B-factor) refinement is net harmful** regardless of the
+`wxu_scale` setting. Systematic controls on a multi-conformer test structure showed:
+
+| Strategy | R-free end | b_min |
+|---|---|---|
+| occ only | **0.1166** | 1.2 (stable) |
+| xyz only = xyz + occ | 0.1177 | 1.2 (stable) |
+| BSS only (zerocyc) | 0.1181 | 1.2 (stable) |
+| B only (any wxu_scale) | 0.1193–0.1237 | 0.0–3.5 |
+| xyz + B (any wxu_scale) | 0.1198–0.1222 | 0.0–4.1 |
+| full defaults + RSR | 0.1200 | 0.0 |
+
+Root cause: partially-occupied alternate conformers sitting ~0.5–1.5 Å apart
+generate ill-conditioned ADP gradients. The diffraction signal cannot distinguish
+"one atom with B=5" from "half an atom with B=0 plus half an atom with B=10".
+ADP refinement drives some atoms to b_min=0 (B-factor floor) in the very first
+cycle, corrupting subsequent xyz gradients and causing slow divergence over
+multiple macro cycles ("explosion in slow motion").
+
+The through-space ADP restraints (sphere_radius=5 Å) do couple the alternate
+conformers to each other (the plain_pair_sym_table uses `add_all_pairs` with no
+conformer filtering), but the restraint weight is insufficient to prevent collapse
+against the diffraction gradient. Reducing `wxu_scale` below 1.0 prevents the
+b_min collapse but worsens R-free further because the B-factors are then
+under-refined relative to the data.
+
+**Recommended strategy for high-copy ensemble refinement:**
+```
+"refinement.refine.strategy=individual_sites occupancies"
+```
+Omit `individual_adp`. Use 3–10 macro cycles; xyz+occ converges stably.
+This is also the correct strategy for generating converged local-minimum
+structures as CNN training data (conformer-swap perturbation → refine → CNN
+learns to detect stuck assignments from the map).
+
 ## Known limitations
 
 - Joint X-ray/neutron refinement path in `validate()` is not wired up
 - Twin refinement untested (user f_mask_twin is not set)
+- ADP refinement harmful for high-copy ensembles (see above)

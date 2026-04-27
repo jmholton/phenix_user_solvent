@@ -89,6 +89,30 @@ output for the lifetime of the run.
 removal does not silently reset it to `None` at the start of each scaling
 cycle.
 
+## Recommended refinement strategy for high-copy ensembles
+
+For multi-conformer / high-copy ensemble structures, **omit ADP refinement**.
+Systematic controls show that B-factor refinement is net harmful regardless of
+restraint weights, while xyz + occupancy refinement converges stably:
+
+| Strategy | R-free |
+|---|---|
+| occupancies only | **0.117** |
+| xyz + occupancies | 0.118 |
+| BSS only | 0.118 |
+| any strategy including B-factors | 0.119–0.124 |
+
+Root cause: partially-occupied alternate conformers ~0.5–1.5 Å apart generate
+ill-conditioned ADP gradients. The diffraction signal cannot distinguish between
+conformers with redistributed B-factors, so some atoms collapse to B=0 in the
+first ADP cycle, corrupting subsequent coordinate gradients over multiple cycles.
+
+Recommended CLI for stable multi-cycle convergence:
+```
+"refinement.refine.strategy=individual_sites occupancies"
+refinement.main.number_of_macro_cycles=5
+```
+
 ## Reference
 
 Afonine, P. V., Grosse-Kunstleve, R. W., Adams, P. D. & Urzhumtsev, A. (2013).
