@@ -46,9 +46,12 @@ the same file as the data MTZ if the columns are present there.
 
 ## Example
 
-See `example/README.txt`. The solvent model in `example/solvent_Fpart.mtz`
-was computed by Refmac from an ensemble model of the same crystal.
-Refining `example/evenmoreconf.pdb` (1 macro cycle, no RSR):
+The solvent model in `example/solvent_Fpart.mtz` was computed by Refmac from
+an ensemble model of the same crystal. `example/evenmoreconf.pdb` is a
+multi-conformer model; `example/refme.mtz` contains the experimental data
+with the original R-free flags.
+
+To reproduce the user-supplied solvent result (log: `example/usermap_001.log`):
 
 ```
 phenix.refine \
@@ -56,7 +59,21 @@ phenix.refine \
   example/refme.mtz \
   refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
-  refinement.input.bulk_solvent_map.phases_label=PHIpart
+  refinement.input.bulk_solvent_map.phases_label=PHIpart \
+  refinement.main.number_of_macro_cycles=1 \
+  refinement.refine.strategy="individual_sites individual_adp occupancies" \
+  output.prefix=usermap
+```
+
+To reproduce the default flat-mask result (log: `example/default_001.log`):
+
+```
+phenix.refine \
+  example/evenmoreconf.pdb \
+  example/refme.mtz \
+  refinement.main.number_of_macro_cycles=1 \
+  refinement.refine.strategy="individual_sites individual_adp occupancies" \
+  output.prefix=default
 ```
 
 | Bulk solvent | R-work | R-free |
@@ -89,29 +106,10 @@ output for the lifetime of the run.
 removal does not silently reset it to `None` at the start of each scaling
 cycle.
 
-## Recommended refinement strategy for high-copy ensembles
+## Known limitations
 
-For multi-conformer / high-copy ensemble structures, **omit ADP refinement**.
-Systematic controls show that B-factor refinement is net harmful regardless of
-restraint weights, while xyz + occupancy refinement converges stably:
-
-| Strategy | R-free |
-|---|---|
-| occupancies only | **0.117** |
-| xyz + occupancies | 0.118 |
-| BSS only | 0.118 |
-| any strategy including B-factors | 0.119–0.124 |
-
-Root cause: partially-occupied alternate conformers ~0.5–1.5 Å apart generate
-ill-conditioned ADP gradients. The diffraction signal cannot distinguish between
-conformers with redistributed B-factors, so some atoms collapse to B=0 in the
-first ADP cycle, corrupting subsequent coordinate gradients over multiple cycles.
-
-Recommended CLI for stable multi-cycle convergence:
-```
-"refinement.refine.strategy=individual_sites occupancies"
-refinement.main.number_of_macro_cycles=5
-```
+- Joint X-ray/neutron refinement path in `validate()` is not wired up
+- Twin refinement untested (user f_mask_twin is not set)
 
 ## Reference
 
