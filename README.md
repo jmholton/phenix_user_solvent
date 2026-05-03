@@ -21,8 +21,8 @@ factors (amplitude + phase columns from an MTZ file) in place of `F_mask`.
 map. The mask is not recomputed from the atomic model during refinement.
 
 A key use case is supplying a bulk solvent model computed from an explicit-solvent
-MD simulation (e.g. AMBER) with optional density editing, where the solvent
-structure is better defined than the flat-mask approximation.
+MD simulation (e.g. AMBER) or other sources, where the solvent
+structure may be better defined than the flat-mask approximation.
 
 ## Files changed
 
