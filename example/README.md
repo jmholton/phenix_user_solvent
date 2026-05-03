@@ -31,7 +31,7 @@ F_model = k_total * (F_calc + k_mask * F_mask)
 User-supplied bulk solvent (3 macro cycles, xyz + ADP):
 
 ```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+phenix.refine \
   starthere.pdb refme.mtz \
   refinement.input.bulk_solvent_map.file_name=solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
@@ -44,7 +44,7 @@ User-supplied bulk solvent (3 macro cycles, xyz + ADP):
 Default flat-mask bulk solvent:
 
 ```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+phenix.refine \
   starthere.pdb refme.mtz \
   refinement.main.number_of_macro_cycles=3 \
   "refinement.refine.strategy=individual_sites individual_adp" \
