@@ -13,9 +13,6 @@ multi-conformer structure of 1AHO refined with `phenix.refine`.
 | `usersolvent_001.*` | Full phenix job — user-supplied bulk solvent |
 | `usersolvent_data.mtz` | Data MTZ written by phenix for usersolvent run |
 | `defaultsolvent_001.*` | Full phenix job — default flat-mask bulk solvent |
-| `fill_missing_atoms.py` | Fill missing atoms in chain-as-conformer PDB format |
-| `make_occ_groups.py` | Generate per-residue constrained occupancy group .eff file |
-| `reoccupy.awk` | Convert chain-as-conformer to altloc-as-conformer PDB format |
 
 `solvent_Fpart.mtz` was computed from an AMBER MD trajectory of the same
 crystal, followed by density editing in which strong difference features from

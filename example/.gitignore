@@ -20,6 +20,3 @@
 !defaultsolvent_001.eff
 !defaultsolvent_001.geo
 !defaultsolvent_002.def
-!fill_missing_atoms.py
-!make_occ_groups.py
-!reoccupy.awk
