@@ -1,0 +1,758 @@
+refinement {
+  refine {
+    occupancies {
+      constrained_group {
+        selection = chain A and altloc A and resid 1
+        selection = chain A and altloc B and resid 1
+        selection = chain A and altloc C and resid 1
+        selection = chain A and altloc D and resid 1
+        selection = chain A and altloc E and resid 1
+        selection = chain A and altloc F and resid 1
+        selection = chain A and altloc G and resid 1
+        selection = chain A and altloc H and resid 1
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 2
+        selection = chain A and altloc B and resid 2
+        selection = chain A and altloc C and resid 2
+        selection = chain A and altloc D and resid 2
+        selection = chain A and altloc E and resid 2
+        selection = chain A and altloc F and resid 2
+        selection = chain A and altloc G and resid 2
+        selection = chain A and altloc H and resid 2
+        selection = chain A and altloc I and resid 2
+        selection = chain A and altloc J and resid 2
+        selection = chain A and altloc K and resid 2
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 3
+        selection = chain A and altloc B and resid 3
+        selection = chain A and altloc C and resid 3
+        selection = chain A and altloc D and resid 3
+        selection = chain A and altloc E and resid 3
+        selection = chain A and altloc F and resid 3
+        selection = chain A and altloc G and resid 3
+        selection = chain A and altloc H and resid 3
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 4
+        selection = chain A and altloc B and resid 4
+        selection = chain A and altloc C and resid 4
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 5
+        selection = chain A and altloc B and resid 5
+        selection = chain A and altloc C and resid 5
+        selection = chain A and altloc D and resid 5
+        selection = chain A and altloc E and resid 5
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 6
+        selection = chain A and altloc B and resid 6
+        selection = chain A and altloc C and resid 6
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 7
+        selection = chain A and altloc B and resid 7
+        selection = chain A and altloc C and resid 7
+        selection = chain A and altloc D and resid 7
+        selection = chain A and altloc E and resid 7
+        selection = chain A and altloc F and resid 7
+        selection = chain A and altloc G and resid 7
+        selection = chain A and altloc H and resid 7
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 8
+        selection = chain A and altloc B and resid 8
+        selection = chain A and altloc C and resid 8
+        selection = chain A and altloc D and resid 8
+        selection = chain A and altloc E and resid 8
+        selection = chain A and altloc F and resid 8
+        selection = chain A and altloc G and resid 8
+        selection = chain A and altloc H and resid 8
+        selection = chain A and altloc I and resid 8
+        selection = chain A and altloc J and resid 8
+        selection = chain A and altloc K and resid 8
+        selection = chain A and altloc L and resid 8
+        selection = chain A and altloc M and resid 8
+        selection = chain A and altloc N and resid 8
+        selection = chain A and altloc O and resid 8
+        selection = chain A and altloc P and resid 8
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 9
+        selection = chain A and altloc C and resid 9
+        selection = chain A and altloc D and resid 9
+        selection = chain A and altloc E and resid 9
+        selection = chain A and altloc F and resid 9
+        selection = chain A and altloc G and resid 9
+        selection = chain A and altloc H and resid 9
+        selection = chain A and altloc I and resid 9
+        selection = chain A and altloc J and resid 9
+        selection = chain A and altloc K and resid 9
+        selection = chain A and altloc L and resid 9
+        selection = chain A and altloc M and resid 9
+        selection = chain A and altloc N and resid 9
+        selection = chain A and altloc P and resid 9
+        selection = chain A and altloc Q and resid 9
+        selection = chain A and altloc R and resid 9
+        selection = chain A and altloc S and resid 9
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 10
+        selection = chain A and altloc B and resid 10
+        selection = chain A and altloc C and resid 10
+        selection = chain A and altloc D and resid 10
+        selection = chain A and altloc E and resid 10
+        selection = chain A and altloc F and resid 10
+        selection = chain A and altloc G and resid 10
+        selection = chain A and altloc H and resid 10
+        selection = chain A and altloc I and resid 10
+        selection = chain A and altloc J and resid 10
+        selection = chain A and altloc K and resid 10
+        selection = chain A and altloc L and resid 10
+        selection = chain A and altloc M and resid 10
+        selection = chain A and altloc N and resid 10
+        selection = chain A and altloc O and resid 10
+        selection = chain A and altloc P and resid 10
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 11
+        selection = chain A and altloc B and resid 11
+        selection = chain A and altloc C and resid 11
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 12
+        selection = chain A and altloc B and resid 12
+        selection = chain A and altloc C and resid 12
+        selection = chain A and altloc D and resid 12
+        selection = chain A and altloc E and resid 12
+        selection = chain A and altloc F and resid 12
+        selection = chain A and altloc G and resid 12
+        selection = chain A and altloc H and resid 12
+        selection = chain A and altloc I and resid 12
+        selection = chain A and altloc J and resid 12
+        selection = chain A and altloc K and resid 12
+        selection = chain A and altloc L and resid 12
+        selection = chain A and altloc M and resid 12
+        selection = chain A and altloc N and resid 12
+        selection = chain A and altloc O and resid 12
+        selection = chain A and altloc P and resid 12
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 13
+        selection = chain A and altloc B and resid 13
+        selection = chain A and altloc C and resid 13
+        selection = chain A and altloc D and resid 13
+        selection = chain A and altloc E and resid 13
+        selection = chain A and altloc F and resid 13
+        selection = chain A and altloc G and resid 13
+        selection = chain A and altloc H and resid 13
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 14
+        selection = chain A and altloc B and resid 14
+        selection = chain A and altloc C and resid 14
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 15
+        selection = chain A and altloc B and resid 15
+        selection = chain A and altloc C and resid 15
+        selection = chain A and altloc D and resid 15
+        selection = chain A and altloc E and resid 15
+        selection = chain A and altloc F and resid 15
+        selection = chain A and altloc G and resid 15
+        selection = chain A and altloc H and resid 15
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 16
+        selection = chain A and altloc B and resid 16
+        selection = chain A and altloc C and resid 16
+        selection = chain A and altloc D and resid 16
+        selection = chain A and altloc E and resid 16
+        selection = chain A and altloc F and resid 16
+        selection = chain A and altloc G and resid 16
+        selection = chain A and altloc H and resid 16
+        selection = chain A and altloc I and resid 16
+        selection = chain A and altloc J and resid 16
+        selection = chain A and altloc K and resid 16
+        selection = chain A and altloc L and resid 16
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 17
+        selection = chain A and altloc B and resid 17
+        selection = chain A and altloc C and resid 17
+        selection = chain A and altloc D and resid 17
+        selection = chain A and altloc E and resid 17
+        selection = chain A and altloc F and resid 17
+        selection = chain A and altloc G and resid 17
+        selection = chain A and altloc H and resid 17
+        selection = chain A and altloc I and resid 17
+        selection = chain A and altloc J and resid 17
+        selection = chain A and altloc K and resid 17
+        selection = chain A and altloc L and resid 17
+        selection = chain A and altloc M and resid 17
+        selection = chain A and altloc N and resid 17
+        selection = chain A and altloc O and resid 17
+        selection = chain A and altloc P and resid 17
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 18
+        selection = chain A and altloc B and resid 18
+        selection = chain A and altloc C and resid 18
+        selection = chain A and altloc D and resid 18
+        selection = chain A and altloc E and resid 18
+        selection = chain A and altloc F and resid 18
+        selection = chain A and altloc G and resid 18
+        selection = chain A and altloc H and resid 18
+        selection = chain A and altloc I and resid 18
+        selection = chain A and altloc J and resid 18
+        selection = chain A and altloc K and resid 18
+        selection = chain A and altloc L and resid 18
+        selection = chain A and altloc M and resid 18
+        selection = chain A and altloc N and resid 18
+        selection = chain A and altloc O and resid 18
+        selection = chain A and altloc P and resid 18
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 19
+        selection = chain A and altloc B and resid 19
+        selection = chain A and altloc C and resid 19
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 20
+        selection = chain A and altloc B and resid 20
+        selection = chain A and altloc C and resid 20
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 21
+        selection = chain A and altloc B and resid 21
+        selection = chain A and altloc C and resid 21
+        selection = chain A and altloc D and resid 21
+        selection = chain A and altloc E and resid 21
+        selection = chain A and altloc F and resid 21
+        selection = chain A and altloc G and resid 21
+        selection = chain A and altloc H and resid 21
+        selection = chain A and altloc I and resid 21
+        selection = chain A and altloc J and resid 21
+        selection = chain A and altloc K and resid 21
+        selection = chain A and altloc L and resid 21
+        selection = chain A and altloc M and resid 21
+        selection = chain A and altloc N and resid 21
+        selection = chain A and altloc O and resid 21
+        selection = chain A and altloc P and resid 21
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 22
+        selection = chain A and altloc B and resid 22
+        selection = chain A and altloc C and resid 22
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 23
+        selection = chain A and altloc B and resid 23
+        selection = chain A and altloc C and resid 23
+        selection = chain A and altloc D and resid 23
+        selection = chain A and altloc E and resid 23
+        selection = chain A and altloc F and resid 23
+        selection = chain A and altloc G and resid 23
+        selection = chain A and altloc H and resid 23
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 24
+        selection = chain A and altloc B and resid 24
+        selection = chain A and altloc C and resid 24
+        selection = chain A and altloc D and resid 24
+        selection = chain A and altloc E and resid 24
+        selection = chain A and altloc F and resid 24
+        selection = chain A and altloc G and resid 24
+        selection = chain A and altloc H and resid 24
+        selection = chain A and altloc I and resid 24
+        selection = chain A and altloc J and resid 24
+        selection = chain A and altloc K and resid 24
+        selection = chain A and altloc L and resid 24
+        selection = chain A and altloc M and resid 24
+        selection = chain A and altloc N and resid 24
+        selection = chain A and altloc O and resid 24
+        selection = chain A and altloc P and resid 24
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 25
+        selection = chain A and altloc B and resid 25
+        selection = chain A and altloc C and resid 25
+        selection = chain A and altloc D and resid 25
+        selection = chain A and altloc E and resid 25
+        selection = chain A and altloc F and resid 25
+        selection = chain A and altloc G and resid 25
+        selection = chain A and altloc H and resid 25
+        selection = chain A and altloc I and resid 25
+        selection = chain A and altloc J and resid 25
+        selection = chain A and altloc K and resid 25
+        selection = chain A and altloc L and resid 25
+        selection = chain A and altloc M and resid 25
+        selection = chain A and altloc N and resid 25
+        selection = chain A and altloc O and resid 25
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 26
+        selection = chain A and altloc B and resid 26
+        selection = chain A and altloc C and resid 26
+        selection = chain A and altloc D and resid 26
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 27
+        selection = chain A and altloc B and resid 27
+        selection = chain A and altloc C and resid 27
+        selection = chain A and altloc D and resid 27
+        selection = chain A and altloc E and resid 27
+        selection = chain A and altloc G and resid 27
+        selection = chain A and altloc H and resid 27
+        selection = chain A and altloc I and resid 27
+        selection = chain A and altloc J and resid 27
+        selection = chain A and altloc K and resid 27
+        selection = chain A and altloc L and resid 27
+        selection = chain A and altloc M and resid 27
+        selection = chain A and altloc N and resid 27
+        selection = chain A and altloc P and resid 27
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 28
+        selection = chain A and altloc B and resid 28
+        selection = chain A and altloc C and resid 28
+        selection = chain A and altloc D and resid 28
+        selection = chain A and altloc E and resid 28
+        selection = chain A and altloc F and resid 28
+        selection = chain A and altloc G and resid 28
+        selection = chain A and altloc H and resid 28
+        selection = chain A and altloc I and resid 28
+        selection = chain A and altloc J and resid 28
+        selection = chain A and altloc K and resid 28
+        selection = chain A and altloc L and resid 28
+        selection = chain A and altloc M and resid 28
+        selection = chain A and altloc N and resid 28
+        selection = chain A and altloc O and resid 28
+        selection = chain A and altloc P and resid 28
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 29
+        selection = chain A and altloc B and resid 29
+        selection = chain A and altloc C and resid 29
+        selection = chain A and altloc D and resid 29
+        selection = chain A and altloc E and resid 29
+        selection = chain A and altloc F and resid 29
+        selection = chain A and altloc G and resid 29
+        selection = chain A and altloc H and resid 29
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 30
+        selection = chain A and altloc B and resid 30
+        selection = chain A and altloc C and resid 30
+        selection = chain A and altloc D and resid 30
+        selection = chain A and altloc E and resid 30
+        selection = chain A and altloc F and resid 30
+        selection = chain A and altloc G and resid 30
+        selection = chain A and altloc H and resid 30
+        selection = chain A and altloc I and resid 30
+        selection = chain A and altloc J and resid 30
+        selection = chain A and altloc K and resid 30
+        selection = chain A and altloc L and resid 30
+        selection = chain A and altloc M and resid 30
+        selection = chain A and altloc N and resid 30
+        selection = chain A and altloc O and resid 30
+        selection = chain A and altloc Q and resid 30
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 31
+        selection = chain A and altloc B and resid 31
+        selection = chain A and altloc C and resid 31
+        selection = chain A and altloc D and resid 31
+        selection = chain A and altloc E and resid 31
+        selection = chain A and altloc F and resid 31
+        selection = chain A and altloc G and resid 31
+        selection = chain A and altloc H and resid 31
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 32
+        selection = chain A and altloc B and resid 32
+        selection = chain A and altloc C and resid 32
+        selection = chain A and altloc D and resid 32
+        selection = chain A and altloc E and resid 32
+        selection = chain A and altloc F and resid 32
+        selection = chain A and altloc G and resid 32
+        selection = chain A and altloc H and resid 32
+        selection = chain A and altloc I and resid 32
+        selection = chain A and altloc J and resid 32
+        selection = chain A and altloc K and resid 32
+        selection = chain A and altloc L and resid 32
+        selection = chain A and altloc M and resid 32
+        selection = chain A and altloc N and resid 32
+        selection = chain A and altloc O and resid 32
+        selection = chain A and altloc P and resid 32
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 33
+        selection = chain A and altloc B and resid 33
+        selection = chain A and altloc C and resid 33
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 34
+        selection = chain A and altloc B and resid 34
+        selection = chain A and altloc C and resid 34
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 35
+        selection = chain A and altloc B and resid 35
+        selection = chain A and altloc C and resid 35
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 36
+        selection = chain A and altloc B and resid 36
+        selection = chain A and altloc C and resid 36
+        selection = chain A and altloc D and resid 36
+        selection = chain A and altloc E and resid 36
+        selection = chain A and altloc F and resid 36
+        selection = chain A and altloc G and resid 36
+        selection = chain A and altloc H and resid 36
+        selection = chain A and altloc I and resid 36
+        selection = chain A and altloc J and resid 36
+        selection = chain A and altloc K and resid 36
+        selection = chain A and altloc L and resid 36
+        selection = chain A and altloc M and resid 36
+        selection = chain A and altloc N and resid 36
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 37
+        selection = chain A and altloc B and resid 37
+        selection = chain A and altloc C and resid 37
+        selection = chain A and altloc D and resid 37
+        selection = chain A and altloc E and resid 37
+        selection = chain A and altloc F and resid 37
+        selection = chain A and altloc G and resid 37
+        selection = chain A and altloc H and resid 37
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 38
+        selection = chain A and altloc B and resid 38
+        selection = chain A and altloc C and resid 38
+        selection = chain A and altloc D and resid 38
+        selection = chain A and altloc E and resid 38
+        selection = chain A and altloc F and resid 38
+        selection = chain A and altloc G and resid 38
+        selection = chain A and altloc H and resid 38
+        selection = chain A and altloc I and resid 38
+        selection = chain A and altloc J and resid 38
+        selection = chain A and altloc K and resid 38
+        selection = chain A and altloc L and resid 38
+        selection = chain A and altloc M and resid 38
+        selection = chain A and altloc N and resid 38
+        selection = chain A and altloc O and resid 38
+        selection = chain A and altloc P and resid 38
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 39
+        selection = chain A and altloc B and resid 39
+        selection = chain A and altloc C and resid 39
+        selection = chain A and altloc D and resid 39
+        selection = chain A and altloc E and resid 39
+        selection = chain A and altloc F and resid 39
+        selection = chain A and altloc G and resid 39
+        selection = chain A and altloc H and resid 39
+        selection = chain A and altloc I and resid 39
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 40
+        selection = chain A and altloc B and resid 40
+        selection = chain A and altloc C and resid 40
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 41
+        selection = chain A and altloc B and resid 41
+        selection = chain A and altloc C and resid 41
+        selection = chain A and altloc D and resid 41
+        selection = chain A and altloc F and resid 41
+        selection = chain A and altloc G and resid 41
+        selection = chain A and altloc H and resid 41
+        selection = chain A and altloc I and resid 41
+        selection = chain A and altloc J and resid 41
+        selection = chain A and altloc K and resid 41
+        selection = chain A and altloc L and resid 41
+        selection = chain A and altloc M and resid 41
+        selection = chain A and altloc N and resid 41
+        selection = chain A and altloc O and resid 41
+        selection = chain A and altloc P and resid 41
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 42
+        selection = chain A and altloc B and resid 42
+        selection = chain A and altloc C and resid 42
+        selection = chain A and altloc D and resid 42
+        selection = chain A and altloc E and resid 42
+        selection = chain A and altloc F and resid 42
+        selection = chain A and altloc G and resid 42
+        selection = chain A and altloc H and resid 42
+        selection = chain A and altloc I and resid 42
+        selection = chain A and altloc J and resid 42
+        selection = chain A and altloc K and resid 42
+        selection = chain A and altloc L and resid 42
+        selection = chain A and altloc M and resid 42
+        selection = chain A and altloc N and resid 42
+        selection = chain A and altloc O and resid 42
+        selection = chain A and altloc P and resid 42
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 43
+        selection = chain A and altloc B and resid 43
+        selection = chain A and altloc C and resid 43
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 44
+        selection = chain A and altloc B and resid 44
+        selection = chain A and altloc C and resid 44
+        selection = chain A and altloc D and resid 44
+        selection = chain A and altloc E and resid 44
+        selection = chain A and altloc F and resid 44
+        selection = chain A and altloc G and resid 44
+        selection = chain A and altloc H and resid 44
+        selection = chain A and altloc I and resid 44
+        selection = chain A and altloc J and resid 44
+        selection = chain A and altloc K and resid 44
+        selection = chain A and altloc L and resid 44
+        selection = chain A and altloc M and resid 44
+        selection = chain A and altloc N and resid 44
+        selection = chain A and altloc O and resid 44
+        selection = chain A and altloc P and resid 44
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 45
+        selection = chain A and altloc B and resid 45
+        selection = chain A and altloc C and resid 45
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 46
+        selection = chain A and altloc B and resid 46
+        selection = chain A and altloc C and resid 46
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 47
+        selection = chain A and altloc B and resid 47
+        selection = chain A and altloc C and resid 47
+        selection = chain A and altloc D and resid 47
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 48
+        selection = chain A and altloc B and resid 48
+        selection = chain A and altloc C and resid 48
+        selection = chain A and altloc D and resid 48
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 49
+        selection = chain A and altloc B and resid 49
+        selection = chain A and altloc C and resid 49
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 50
+        selection = chain A and altloc B and resid 50
+        selection = chain A and altloc C and resid 50
+        selection = chain A and altloc D and resid 50
+        selection = chain A and altloc E and resid 50
+        selection = chain A and altloc F and resid 50
+        selection = chain A and altloc G and resid 50
+        selection = chain A and altloc H and resid 50
+        selection = chain A and altloc I and resid 50
+        selection = chain A and altloc J and resid 50
+        selection = chain A and altloc K and resid 50
+        selection = chain A and altloc L and resid 50
+        selection = chain A and altloc M and resid 50
+        selection = chain A and altloc N and resid 50
+        selection = chain A and altloc O and resid 50
+        selection = chain A and altloc P and resid 50
+        selection = chain A and altloc Q and resid 50
+        selection = chain A and altloc R and resid 50
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 51
+        selection = chain A and altloc B and resid 51
+        selection = chain A and altloc C and resid 51
+        selection = chain A and altloc D and resid 51
+        selection = chain A and altloc E and resid 51
+        selection = chain A and altloc F and resid 51
+        selection = chain A and altloc G and resid 51
+        selection = chain A and altloc H and resid 51
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 52
+        selection = chain A and altloc B and resid 52
+        selection = chain A and altloc C and resid 52
+        selection = chain A and altloc D and resid 52
+        selection = chain A and altloc E and resid 52
+        selection = chain A and altloc F and resid 52
+        selection = chain A and altloc G and resid 52
+        selection = chain A and altloc H and resid 52
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 53
+        selection = chain A and altloc B and resid 53
+        selection = chain A and altloc C and resid 53
+        selection = chain A and altloc D and resid 53
+        selection = chain A and altloc E and resid 53
+        selection = chain A and altloc F and resid 53
+        selection = chain A and altloc G and resid 53
+        selection = chain A and altloc H and resid 53
+        selection = chain A and altloc I and resid 53
+        selection = chain A and altloc J and resid 53
+        selection = chain A and altloc K and resid 53
+        selection = chain A and altloc L and resid 53
+        selection = chain A and altloc M and resid 53
+        selection = chain A and altloc N and resid 53
+        selection = chain A and altloc O and resid 53
+        selection = chain A and altloc P and resid 53
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 54
+        selection = chain A and altloc B and resid 54
+        selection = chain A and altloc C and resid 54
+        selection = chain A and altloc D and resid 54
+        selection = chain A and altloc E and resid 54
+        selection = chain A and altloc F and resid 54
+        selection = chain A and altloc G and resid 54
+        selection = chain A and altloc H and resid 54
+        selection = chain A and altloc I and resid 54
+        selection = chain A and altloc J and resid 54
+        selection = chain A and altloc K and resid 54
+        selection = chain A and altloc L and resid 54
+        selection = chain A and altloc M and resid 54
+        selection = chain A and altloc N and resid 54
+        selection = chain A and altloc O and resid 54
+        selection = chain A and altloc P and resid 54
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 55
+        selection = chain A and altloc B and resid 55
+        selection = chain A and altloc C and resid 55
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 56
+        selection = chain A and altloc B and resid 56
+        selection = chain A and altloc C and resid 56
+        selection = chain A and altloc D and resid 56
+        selection = chain A and altloc E and resid 56
+        selection = chain A and altloc F and resid 56
+        selection = chain A and altloc G and resid 56
+        selection = chain A and altloc H and resid 56
+        selection = chain A and altloc I and resid 56
+        selection = chain A and altloc J and resid 56
+        selection = chain A and altloc K and resid 56
+        selection = chain A and altloc L and resid 56
+        selection = chain A and altloc M and resid 56
+        selection = chain A and altloc N and resid 56
+        selection = chain A and altloc O and resid 56
+        selection = chain A and altloc P and resid 56
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 57
+        selection = chain A and altloc B and resid 57
+        selection = chain A and altloc C and resid 57
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 58
+        selection = chain A and altloc B and resid 58
+        selection = chain A and altloc C and resid 58
+        selection = chain A and altloc D and resid 58
+        selection = chain A and altloc F and resid 58
+        selection = chain A and altloc G and resid 58
+        selection = chain A and altloc H and resid 58
+        selection = chain A and altloc I and resid 58
+        selection = chain A and altloc K and resid 58
+        selection = chain A and altloc L and resid 58
+        selection = chain A and altloc M and resid 58
+        selection = chain A and altloc N and resid 58
+        selection = chain A and altloc O and resid 58
+        selection = chain A and altloc P and resid 58
+        selection = chain A and altloc Q and resid 58
+        selection = chain A and altloc R and resid 58
+        selection = chain A and altloc S and resid 58
+        selection = chain A and altloc T and resid 58
+        selection = chain A and altloc U and resid 58
+        selection = chain A and altloc V and resid 58
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 59
+        selection = chain A and altloc B and resid 59
+        selection = chain A and altloc C and resid 59
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 60
+        selection = chain A and altloc B and resid 60
+        selection = chain A and altloc C and resid 60
+        selection = chain A and altloc D and resid 60
+        selection = chain A and altloc E and resid 60
+        selection = chain A and altloc F and resid 60
+        selection = chain A and altloc G and resid 60
+        selection = chain A and altloc H and resid 60
+      }
+      constrained_group {
+        selection = chain A and altloc B and resid 61
+        selection = chain A and altloc C and resid 61
+        selection = chain A and altloc D and resid 61
+        selection = chain A and altloc E and resid 61
+        selection = chain A and altloc G and resid 61
+        selection = chain A and altloc H and resid 61
+        selection = chain A and altloc I and resid 61
+        selection = chain A and altloc J and resid 61
+        selection = chain A and altloc K and resid 61
+        selection = chain A and altloc M and resid 61
+        selection = chain A and altloc N and resid 61
+        selection = chain A and altloc O and resid 61
+        selection = chain A and altloc P and resid 61
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 62
+        selection = chain A and altloc B and resid 62
+        selection = chain A and altloc C and resid 62
+        selection = chain A and altloc D and resid 62
+        selection = chain A and altloc E and resid 62
+        selection = chain A and altloc F and resid 62
+        selection = chain A and altloc G and resid 62
+        selection = chain A and altloc H and resid 62
+        selection = chain A and altloc I and resid 62
+        selection = chain A and altloc J and resid 62
+        selection = chain A and altloc K and resid 62
+        selection = chain A and altloc L and resid 62
+        selection = chain A and altloc M and resid 62
+        selection = chain A and altloc N and resid 62
+        selection = chain A and altloc O and resid 62
+        selection = chain A and altloc P and resid 62
+        selection = chain A and altloc Q and resid 62
+        selection = chain A and altloc R and resid 62
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 63
+        selection = chain A and altloc B and resid 63
+        selection = chain A and altloc C and resid 63
+        selection = chain A and altloc D and resid 63
+        selection = chain A and altloc E and resid 63
+        selection = chain A and altloc F and resid 63
+        selection = chain A and altloc G and resid 63
+        selection = chain A and altloc H and resid 63
+      }
+      constrained_group {
+        selection = chain A and altloc A and resid 64
+        selection = chain A and altloc B and resid 64
+        selection = chain A and altloc C and resid 64
+        selection = chain A and altloc D and resid 64
+        selection = chain A and altloc E and resid 64
+        selection = chain A and altloc F and resid 64
+        selection = chain A and altloc G and resid 64
+        selection = chain A and altloc H and resid 64
+        selection = chain A and altloc I and resid 64
+        selection = chain A and altloc J and resid 64
+        selection = chain A and altloc K and resid 64
+        selection = chain A and altloc L and resid 64
+        selection = chain A and altloc M and resid 64
+        selection = chain A and altloc N and resid 64
+        selection = chain A and altloc O and resid 64
+        selection = chain A and altloc P and resid 64
+      }
+      individual = water
+    }
+  }
+}
