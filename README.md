@@ -20,9 +20,9 @@ factors (amplitude + phase columns from an MTZ file) in place of `F_mask`.
 `k_mask` continues to be determined analytically against the user-supplied
 map. The mask is not recomputed from the atomic model during refinement.
 
-A key use case is supplying a bulk solvent model computed from an ensemble
-or explicit-solvent MD simulation, where the solvent structure is better
-defined than the flat-mask approximation.
+A key use case is supplying a bulk solvent model computed from an explicit-solvent
+MD simulation (e.g. AMBER) with optional density editing, where the solvent
+structure is better defined than the flat-mask approximation.
 
 ## Files changed
 
@@ -46,8 +46,10 @@ the same file as the data MTZ if the columns are present there.
 
 ## Example
 
-The solvent model in `example/solvent_Fpart.mtz` was computed by Refmac from
-an ensemble model of the same crystal. `example/under20.pdb` is a
+The solvent model in `example/solvent_Fpart.mtz` was computed from an AMBER
+MD trajectory of the same crystal, followed by density editing in which strong
+difference features from Fo-Fc maps (computed without free-flagged reflections)
+were added back. `example/under20.pdb` is a
 multi-conformer model (conformers with occupancy ≥ 0.20 retained);
 `example/refme.mtz` contains the experimental data with the original R-free flags.
 

@@ -17,8 +17,10 @@ multi-conformer structure of 1AHO refined with `phenix.refine`.
 | `make_occ_groups.py` | Generate per-residue constrained occupancy group .eff file |
 | `reoccupy.awk` | Convert chain-as-conformer to altloc-as-conformer PDB format |
 
-`solvent_Fpart.mtz` was computed by Refmac from an ensemble model of the
-same crystal. The amplitudes and phases replace the internally computed flat
+`solvent_Fpart.mtz` was computed from an AMBER MD trajectory of the same
+crystal, followed by density editing in which strong difference features from
+Fo-Fc maps (computed without free-flagged reflections) were added back.
+The amplitudes and phases replace the internally computed flat
 0/1 mask in phenix.refine's bulk solvent model:
 
 ```
