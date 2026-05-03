@@ -47,39 +47,39 @@ the same file as the data MTZ if the columns are present there.
 ## Example
 
 The solvent model in `example/solvent_Fpart.mtz` was computed by Refmac from
-an ensemble model of the same crystal. `example/evenmoreconf.pdb` is a
-multi-conformer model; `example/refme.mtz` contains the experimental data
-with the original R-free flags.
+an ensemble model of the same crystal. `example/under20.pdb` is a
+multi-conformer model (conformers with occupancy ≥ 0.20 retained);
+`example/refme.mtz` contains the experimental data with the original R-free flags.
 
-To reproduce the user-supplied solvent result (log: `example/usermap_001.log`):
+To reproduce the user-supplied solvent result (log: `example/under20_usersolvent_xyzoB_001.log`):
 
 ```
 phenix.refine \
-  example/evenmoreconf.pdb \
+  example/under20.pdb \
   example/refme.mtz \
   refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
-  refinement.main.number_of_macro_cycles=1 \
+  refinement.main.number_of_macro_cycles=10 \
   refinement.refine.strategy="individual_sites individual_adp occupancies" \
-  output.prefix=usermap
+  output.prefix=under20_usersolvent_xyzoB
 ```
 
-To reproduce the default flat-mask result (log: `example/default_001.log`):
+To reproduce the default flat-mask result (log: `example/under20_defaultsolvent_xyzoB_001.log`):
 
 ```
 phenix.refine \
-  example/evenmoreconf.pdb \
+  example/under20.pdb \
   example/refme.mtz \
-  refinement.main.number_of_macro_cycles=1 \
+  refinement.main.number_of_macro_cycles=10 \
   refinement.refine.strategy="individual_sites individual_adp occupancies" \
-  output.prefix=default
+  output.prefix=under20_defaultsolvent_xyzoB
 ```
 
 | Bulk solvent | R-work | R-free |
 |---|---|---|
-| Default (flat mask) | 0.177 | 0.180 |
-| Ensemble Fpart/PHIpart | **0.108** | **0.119** |
+| Default (flat mask) | 0.129 | 0.144 |
+| Ensemble Fpart/PHIpart | **0.086** | **0.104** |
 
 ## Applying the patch
 

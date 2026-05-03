@@ -8,7 +8,7 @@ Always use `/programs/phenix-2.1rc2-6037/bin/phenix.refine` to run the patched v
 
 ## What was changed and why
 
-Four changes in the phenix-2.1rc2-6037 installation:
+Five changes in the phenix-2.1rc2-6037 installation:
 
 **`lib/python3.9/site-packages/phenix/refinement/__init__.params`**
 Added `refinement.input.bulk_solvent_map` scope inside existing `input { }` scope:
@@ -33,6 +33,13 @@ Calls `fmodel.set_user_f_masks([f_mask])`.
 - In `manager.select()`, propagate `_user_f_masks` (selecting the same reflections)
   so that outlier removal (`remove_outliers` → `select(in_place=True)`) does not
   silently reset `_user_f_masks` to `None`
+
+**`lib/python3.9/site-packages/mmtbx/refinement/minimization.py`** (one change):
+- Added per-atom U_iso shift clamping in `apply_shifts()`, inside the `if(self.refine_adp)` block,
+  after `xray.ext.minimization_apply_shifts()` fills `scatterers_shifted` and before
+  `replace_scatterers()`. For each atom with `0 < occ < 1` and `use_u_iso()`, the total
+  U_iso shift over the LBFGS session is clamped to `max_delta_u * occ`, where
+  `max_delta_u = adptbx.b_as_u(5.0)` (≈0.063 Å²). Sign is preserved with `math.copysign`.
 
 ## Key design decisions
 
@@ -66,78 +73,73 @@ R as the default run.
 
 ## Testing
 
-**Quick test (1aho, small, ~30 s):**
+**Canonical user vs default solvent comparison (under20.pdb, ~10 min each):**
+
+User solvent (log: `example/under20_usersolvent_xyzoB_001.log`):
 ```
 /programs/phenix-2.1rc2-6037/bin/phenix.refine \
-  example/1aho.pdb example/1aho.mtz \
+  example/under20.pdb example/refme.mtz \
   refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
-  refinement.main.number_of_macro_cycles=1 \
+  refinement.main.number_of_macro_cycles=10 \
   "refinement.refine.strategy=individual_sites individual_adp occupancies" \
-  output.prefix=test_1aho --overwrite
+  output.prefix=under20_usersolvent_xyzoB --overwrite
 ```
-Expected: R-work ~0.151, R-free ~0.147.
+Expected: R-work=0.086, R-free=0.104.
 
-**Large ensemble test (evenmoreconf.pdb, ~5 min):**
+Default solvent (log: `example/under20_defaultsolvent_xyzoB_001.log`):
 ```
 /programs/phenix-2.1rc2-6037/bin/phenix.refine \
-  evenmoreconf.pdb refme_minRfree.mtz \
-  refinement.input.bulk_solvent_map.file_name=solvent_Fpart.mtz \
-  refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
-  refinement.input.bulk_solvent_map.phases_label=PHIpart \
-  refinement.main.number_of_macro_cycles=1 \
+  example/under20.pdb example/refme.mtz \
+  refinement.main.number_of_macro_cycles=10 \
   "refinement.refine.strategy=individual_sites individual_adp occupancies" \
-  output.prefix=test_emc --overwrite
+  output.prefix=under20_defaultsolvent_xyzoB --overwrite
 ```
-Expected: Final R-work ~0.108, R-free ~0.119 (vs default ~0.177).
-
-**Very large ensemble test (48 copies, 45762 atoms, ~25 GB RAM, slow):**
-```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine \
-  refmacout_minRfree.pdb refme_minRfree.mtz \
-  refinement.input.bulk_solvent_map.file_name=refme_minRfree.mtz \
-  refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
-  refinement.input.bulk_solvent_map.phases_label=PHIpart \
-  refinement.main.number_of_macro_cycles=1 \
-  "refinement.refine.strategy=individual_sites individual_adp occupancies" \
-  output.prefix=test_usermap --overwrite
-```
+Expected: R-work=0.129, R-free=0.144.
 
 ## ADP refinement pathology for high-copy ensembles
 
 For multi-conformer / high-copy ensemble structures refined with a user-supplied
-bulk solvent map, **ADP (B-factor) refinement is net harmful** regardless of the
-`wxu_scale` setting. Systematic controls on a multi-conformer test structure showed:
+bulk solvent map, unmodified ADP (B-factor) refinement is harmful: b_min collapses
+to 0 in the first cycle. Root cause is 1/occ gradient amplification in LBFGS.
+
+**Mechanism:** For a partially-occupied atom, X-ray gradient ∝ occ, curvature ∝ occ²,
+so the Newton-Raphson step ∝ 1/occ. For a 5-copy ensemble (occ=0.2) every LBFGS
+step is 5× too large, driving b_min to the floor instantly. The through-space ADP
+restraints (sphere_radius=5 Å) are insufficient to prevent this.
+
+**Fix (minimization.py):** Per-atom U_iso shift clamped to `adptbx.b_as_u(5.0) * occ`
+per LBFGS session. For occ=0.2 the per-session B-shift limit is 1.0 Å², preventing
+collapse from B=1.2 to B=0 in a single macro cycle. The clamp stabilizes ADP
+refinement but does not make it strictly better than skipping ADP (see table below).
+
+Systematic controls on multiconf.pdb (5-copy ensemble, Fpart bulk solvent, 3 cycles):
 
 | Strategy | R-free end | b_min |
 |---|---|---|
 | occ only | **0.1166** | 1.2 (stable) |
 | xyz only = xyz + occ | 0.1177 | 1.2 (stable) |
 | BSS only (zerocyc) | 0.1181 | 1.2 (stable) |
-| B only (any wxu_scale) | 0.1193–0.1237 | 0.0–3.5 |
-| xyz + B (any wxu_scale) | 0.1198–0.1222 | 0.0–4.1 |
+| xyz + ADP + occ, clamp | 0.1187 | 1.3–1.4 (stable) |
+| B only (any wxu_scale, no clamp) | 0.1193–0.1237 | 0.0–3.5 |
+| xyz + B (any wxu_scale, no clamp) | 0.1198–0.1222 | 0.0–4.1 |
 | full defaults + RSR | 0.1200 | 0.0 |
 
-Root cause: partially-occupied alternate conformers sitting ~0.5–1.5 Å apart
-generate ill-conditioned ADP gradients. The diffraction signal cannot distinguish
-"one atom with B=5" from "half an atom with B=0 plus half an atom with B=10".
-ADP refinement drives some atoms to b_min=0 (B-factor floor) in the very first
-cycle, corrupting subsequent xyz gradients and causing slow divergence over
-multiple macro cycles ("explosion in slow motion").
-
-The through-space ADP restraints (sphere_radius=5 Å) do couple the alternate
-conformers to each other (the plain_pair_sym_table uses `add_all_pairs` with no
-conformer filtering), but the restraint weight is insufficient to prevent collapse
-against the diffraction gradient. Reducing `wxu_scale` below 1.0 prevents the
-b_min collapse but worsens R-free further because the B-factors are then
-under-refined relative to the data.
+The clamped xyz+ADP+occ run (log: `example/multiconf_usersolvent_xyzoB_clamp_001.log`)
+stays stable over 3 cycles but remains ~0.001 worse than xyz+occ. The signal that
+would drive B-factors toward the truth is apparently too weak relative to the
+ill-conditioned gradient for partially-occupied conformers to show a benefit within
+3 cycles at this clamp strength (`max_delta_u = adptbx.b_as_u(5.0)`).
 
 **Recommended strategy for high-copy ensemble refinement:**
 ```
 "refinement.refine.strategy=individual_sites occupancies"
 ```
 Omit `individual_adp`. Use 3–10 macro cycles; xyz+occ converges stably.
+The ADP clamp in minimization.py keeps the option open if tighter tuning or
+more cycles eventually shows improvement.
+
 This is also the correct strategy for generating converged local-minimum
 structures as CNN training data (conformer-swap perturbation → refine → CNN
 learns to detect stuck assignments from the map).
