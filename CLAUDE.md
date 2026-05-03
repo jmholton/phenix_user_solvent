@@ -73,30 +73,30 @@ R as the default run.
 
 ## Testing
 
-**Canonical user vs default solvent comparison (under20.pdb, ~10 min each):**
+**Canonical user vs default solvent comparison (~5 min each):**
 
-User solvent (log: `example/under20_usersolvent_xyzoB_001.log`):
+User solvent (log: `example/usersolvent_001.log`):
 ```
 /programs/phenix-2.1rc2-6037/bin/phenix.refine \
-  example/under20.pdb example/refme.mtz \
+  example/starthere.pdb example/refme.mtz \
   refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
-  refinement.main.number_of_macro_cycles=10 \
-  "refinement.refine.strategy=individual_sites individual_adp occupancies" \
-  output.prefix=under20_usersolvent_xyzoB --overwrite
+  refinement.main.number_of_macro_cycles=3 \
+  "refinement.refine.strategy=individual_sites individual_adp" \
+  output.prefix=usersolvent --overwrite
 ```
-Expected: R-work=0.086, R-free=0.104.
+Expected: R-work=0.093, R-free=0.109.
 
-Default solvent (log: `example/under20_defaultsolvent_xyzoB_001.log`):
+Default solvent (log: `example/defaultsolvent_001.log`):
 ```
 /programs/phenix-2.1rc2-6037/bin/phenix.refine \
-  example/under20.pdb example/refme.mtz \
-  refinement.main.number_of_macro_cycles=10 \
-  "refinement.refine.strategy=individual_sites individual_adp occupancies" \
-  output.prefix=under20_defaultsolvent_xyzoB --overwrite
+  example/starthere.pdb example/refme.mtz \
+  refinement.main.number_of_macro_cycles=3 \
+  "refinement.refine.strategy=individual_sites individual_adp" \
+  output.prefix=defaultsolvent --overwrite
 ```
-Expected: R-work=0.129, R-free=0.144.
+Expected: R-work=0.128, R-free=0.147.
 
 ## ADP refinement pathology for high-copy ensembles
 

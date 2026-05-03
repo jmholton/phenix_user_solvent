@@ -49,39 +49,38 @@ the same file as the data MTZ if the columns are present there.
 The solvent model in `example/solvent_Fpart.mtz` was computed from an AMBER
 MD trajectory of the same crystal, followed by density editing in which strong
 difference features from Fo-Fc maps (computed without free-flagged reflections)
-were added back. `example/under20.pdb` is a
-multi-conformer model (conformers with occupancy ≥ 0.20 retained);
+were added back. `example/starthere.pdb` is the starting multi-conformer model;
 `example/refme.mtz` contains the experimental data with the original R-free flags.
 
-To reproduce the user-supplied solvent result (log: `example/under20_usersolvent_xyzoB_001.log`):
+To reproduce the user-supplied solvent result (log: `example/usersolvent_001.log`):
 
 ```
 phenix.refine \
-  example/under20.pdb \
+  example/starthere.pdb \
   example/refme.mtz \
   refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
-  refinement.main.number_of_macro_cycles=10 \
-  refinement.refine.strategy="individual_sites individual_adp occupancies" \
-  output.prefix=under20_usersolvent_xyzoB
+  refinement.main.number_of_macro_cycles=3 \
+  refinement.refine.strategy="individual_sites individual_adp" \
+  output.prefix=usersolvent
 ```
 
-To reproduce the default flat-mask result (log: `example/under20_defaultsolvent_xyzoB_001.log`):
+To reproduce the default flat-mask result (log: `example/defaultsolvent_001.log`):
 
 ```
 phenix.refine \
-  example/under20.pdb \
+  example/starthere.pdb \
   example/refme.mtz \
-  refinement.main.number_of_macro_cycles=10 \
-  refinement.refine.strategy="individual_sites individual_adp occupancies" \
-  output.prefix=under20_defaultsolvent_xyzoB
+  refinement.main.number_of_macro_cycles=3 \
+  refinement.refine.strategy="individual_sites individual_adp" \
+  output.prefix=defaultsolvent
 ```
 
 | Bulk solvent | R-work | R-free |
 |---|---|---|
-| Default (flat mask) | 0.129 | 0.144 |
-| Ensemble Fpart/PHIpart | **0.086** | **0.104** |
+| Default (flat mask) | 0.128 | 0.147 |
+| Ensemble Fpart/PHIpart | **0.093** | **0.109** |
 
 ## Applying the patch
 
