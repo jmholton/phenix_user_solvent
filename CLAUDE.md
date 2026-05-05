@@ -4,7 +4,8 @@ Feature branch adding user-supplied bulk solvent map support to phenix.refine.
 Changes are applied to `/programs/phenix-2.1rc2-6037/` (writable).
 
 **Important:** The default `phenix.refine` in PATH is version 2.0-5936 (unmodified).
-Always use `/programs/phenix-2.1rc2-6037/bin/phenix.refine` to run the patched version.
+Source the phenix-2.1rc2-6037 environment so that `phenix.refine` resolves to the patched version:
+`source /programs/phenix-2.1rc2-6037/phenix_env.sh`
 
 ## What was changed and why
 
@@ -77,24 +78,24 @@ R as the default run.
 
 User solvent (log: `example/usersolvent_001.log`):
 ```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+phenix.refine \
   example/starthere.pdb example/refme.mtz \
   refinement.input.bulk_solvent_map.file_name=example/solvent_Fpart.mtz \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
   refinement.main.number_of_macro_cycles=3 \
-  "refinement.refine.strategy=individual_sites individual_adp" \
-  output.prefix=usersolvent --overwrite
+  refinement.refine.strategy="individual_sites individual_adp" \
+  output.prefix=usersolvent
 ```
 Expected: R-work=0.093, R-free=0.109.
 
 Default solvent (log: `example/defaultsolvent_001.log`):
 ```
-/programs/phenix-2.1rc2-6037/bin/phenix.refine \
+phenix.refine \
   example/starthere.pdb example/refme.mtz \
   refinement.main.number_of_macro_cycles=3 \
-  "refinement.refine.strategy=individual_sites individual_adp" \
-  output.prefix=defaultsolvent --overwrite
+  refinement.refine.strategy="individual_sites individual_adp" \
+  output.prefix=defaultsolvent
 ```
 Expected: R-work=0.128, R-free=0.147.
 
