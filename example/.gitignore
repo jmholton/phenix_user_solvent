@@ -1,0 +1,22 @@
+# Ignore everything; whitelist only the files needed to reproduce the example.
+*
+!.gitignore
+!README.md
+!starthere.pdb
+!refme.mtz
+!solvent_Fpart.mtz
+!usersolvent_001.log
+!usersolvent_001.pdb
+!usersolvent_001.mtz
+!usersolvent_001.cif
+!usersolvent_001.eff
+!usersolvent_001.geo
+!usersolvent_002.def
+!usersolvent_data.mtz
+!defaultsolvent_001.log
+!defaultsolvent_001.pdb
+!defaultsolvent_001.mtz
+!defaultsolvent_001.cif
+!defaultsolvent_001.eff
+!defaultsolvent_001.geo
+!defaultsolvent_002.def
