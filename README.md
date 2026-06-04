@@ -93,17 +93,43 @@ patch -p0 < phenix_refine.patch
 patch -p0 < __init__.params.patch
 ```
 
-The three files that are modified are:
+The three files that are modified, and where to find them, depend on the
+phenix release:
 
-| Patch | Exact path under `site-packages/` |
+**phenix 2.x (2.0-5761, 2.1rc2-6037, …)** — installed layout, `cd` to
+`lib/pythonX.Y/site-packages/` inside the phenix directory:
+
+| Patch | Path under `site-packages/` |
 |---|---|
 | `f_model.patch` | `mmtbx/f_model/f_model.py` |
 | `phenix_refine.patch` | `phenix/programs/phenix_refine.py` |
 | `__init__.params.patch` | `phenix/refinement/__init__.params` |
 
-> **Note:** The phenix installation contains other files named `phenix_refine.py`
-> (`phenix/command_line/phenix_refine.py` and
-> `libtbx/langchain/validation/phenix_refine.py`) that must **not** be patched.
+```bash
+cd /programs/phenix-2.x-NNNN/lib/python3.*/site-packages
+patch -p0 < /path/to/f_model.patch
+patch -p0 < /path/to/phenix_refine.patch
+patch -p0 < /path/to/__init__.params.patch
+```
+
+**phenix 1.21 and earlier** — source-tree layout, `cd` to the `modules/`
+directory inside the phenix directory:
+
+| Patch | Path under `modules/` |
+|---|---|
+| `f_model.patch` | `cctbx_project/mmtbx/f_model/f_model.py` |
+| `phenix_refine.patch` | `phenix/phenix/programs/phenix_refine.py` |
+| `__init__.params.patch` | `phenix/phenix/refinement/__init__.params` |
+
+```bash
+cd /programs/phenix-1.21-NNNN/modules
+patch -p0 < /path/to/f_model.patch
+patch -p0 < /path/to/phenix_refine.patch
+patch -p0 < /path/to/__init__.params.patch
+```
+
+> **Note:** All releases contain other files named `phenix_refine.py`
+> (e.g. `phenix/command_line/phenix_refine.py`) that must **not** be patched.
 > The patch targets `phenix/programs/phenix_refine.py` only.
 
 ## Implementation notes
