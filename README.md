@@ -84,48 +84,46 @@ phenix.refine \
 
 ## Applying the patch
 
-From the `site-packages` directory of your phenix installation:
+First, clone this repository somewhere convenient:
 
 ```bash
-cd /path/to/phenix/lib/python3.9/site-packages
-patch -p0 < f_model.patch
-patch -p0 < phenix_refine.patch
-patch -p0 < __init__.params.patch
+git clone https://github.com/jmholton/phenix_user_solvent.git
 ```
 
-The three files that are modified, and where to find them, depend on the
-phenix release:
+Then apply the patches. The target directory depends on your phenix release:
 
-**phenix 2.x (2.0-5761, 2.1rc2-6037, …)** — installed layout, `cd` to
-`lib/pythonX.Y/site-packages/` inside the phenix directory:
+**phenix 2.x (2.0-5761, 2.1rc2-6037, …)**
 
-| Patch | Path under `site-packages/` |
+The files to patch live under `lib/python3.*/site-packages/`:
+
+| Patch | File patched |
 |---|---|
-| `f_model.patch` | `mmtbx/f_model/f_model.py` |
-| `phenix_refine.patch` | `phenix/programs/phenix_refine.py` |
-| `__init__.params.patch` | `phenix/refinement/__init__.params` |
+| `f_model.patch` | `lib/python3.*/site-packages/mmtbx/f_model/f_model.py` |
+| `phenix_refine.patch` | `lib/python3.*/site-packages/phenix/programs/phenix_refine.py` |
+| `__init__.params.patch` | `lib/python3.*/site-packages/phenix/refinement/__init__.params` |
 
 ```bash
 cd /programs/phenix-2.x-NNNN/lib/python3.*/site-packages
-patch -p0 < /path/to/f_model.patch
-patch -p0 < /path/to/phenix_refine.patch
-patch -p0 < /path/to/__init__.params.patch
+patch -p0 < ~/phenix_user_solvent/f_model.patch
+patch -p0 < ~/phenix_user_solvent/phenix_refine.patch
+patch -p0 < ~/phenix_user_solvent/__init__.params.patch
 ```
 
-**phenix 1.21 and earlier** — source-tree layout, `cd` to the `modules/`
-directory inside the phenix directory:
+**phenix 1.21 and earlier**
 
-| Patch | Path under `modules/` |
+These releases use a source-tree layout; the files live under `modules/`:
+
+| Patch | File patched |
 |---|---|
-| `f_model.patch` | `cctbx_project/mmtbx/f_model/f_model.py` |
-| `phenix_refine.patch` | `phenix/phenix/programs/phenix_refine.py` |
-| `__init__.params.patch` | `phenix/phenix/refinement/__init__.params` |
+| `f_model.patch` | `modules/cctbx_project/mmtbx/f_model/f_model.py` |
+| `phenix_refine.patch` | `modules/phenix/phenix/programs/phenix_refine.py` |
+| `__init__.params.patch` | `modules/phenix/phenix/refinement/__init__.params` |
 
 ```bash
 cd /programs/phenix-1.21-NNNN/modules
-patch -p0 < /path/to/f_model.patch
-patch -p0 < /path/to/phenix_refine.patch
-patch -p0 < /path/to/__init__.params.patch
+patch -p0 < ~/phenix_user_solvent/f_model.patch
+patch -p0 < ~/phenix_user_solvent/phenix_refine.patch
+patch -p0 < ~/phenix_user_solvent/__init__.params.patch
 ```
 
 > **Note:** All releases contain other files named `phenix_refine.py`
