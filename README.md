@@ -93,6 +93,19 @@ patch -p0 < phenix_refine.patch
 patch -p0 < __init__.params.patch
 ```
 
+The three files that are modified are:
+
+| Patch | Exact path under `site-packages/` |
+|---|---|
+| `f_model.patch` | `mmtbx/f_model/f_model.py` |
+| `phenix_refine.patch` | `phenix/programs/phenix_refine.py` |
+| `__init__.params.patch` | `phenix/refinement/__init__.params` |
+
+> **Note:** The phenix installation contains other files named `phenix_refine.py`
+> (`phenix/command_line/phenix_refine.py` and
+> `libtbx/langchain/validation/phenix_refine.py`) that must **not** be patched.
+> The patch targets `phenix/programs/phenix_refine.py` only.
+
 ## Implementation notes
 
 The user-supplied MTZ columns are read once in `validate()`, mapped to ASU,
