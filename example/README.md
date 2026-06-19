@@ -37,7 +37,7 @@ phenix.refine \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
   refinement.main.number_of_macro_cycles=3 \
-  "refinement.refine.strategy=individual_sites individual_adp" \
+  "refinement.refine.strategy=individual_sites+individual_adp" \
   output.prefix=usersolvent --overwrite
 ```
 
@@ -47,7 +47,7 @@ Default flat-mask bulk solvent:
 phenix.refine \
   starthere.pdb refme.mtz \
   refinement.main.number_of_macro_cycles=3 \
-  "refinement.refine.strategy=individual_sites individual_adp" \
+  "refinement.refine.strategy=individual_sites+individual_adp" \
   output.prefix=defaultsolvent --overwrite
 ```
 
