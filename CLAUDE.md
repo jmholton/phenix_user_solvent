@@ -145,6 +145,62 @@ This is also the correct strategy for generating converged local-minimum
 structures as CNN training data (conformer-swap perturbation → refine → CNN
 learns to detect stuck assignments from the map).
 
+## Iterative workflow: phenix refinement + density editing
+
+The per-bin `k_mask` in phenix exposes a limitation of the refmac-style preprocessing
+pipeline that produces the user solvent map. Refmac applies a single global B-factor
+to the MD solvent map to fit it to the data. This blurs the map uniformly, which:
+
+1. Suppresses high-resolution solvent content
+2. Over-weights the already-dominant low-frequency terms
+3. Makes genuine ordered-solvent peaks disappear into the diffuse background
+
+Those suppressed peaks become the largest Fo-Fc features, so the refmac pipeline
+adds them back as explicit partial-occupancy coordinate waters. The model grows
+more complex to compensate for the blurring artifact.
+
+**phenix breaks this compensatory loop.** With per-bin `k_mask` free to scale each
+resolution shell independently, it reveals that the refmac-preprocessed map was
+globally underscaled once the low-frequency bias is released. All k_mask values
+exceed 1.0 in a well-converged run:
+
+| Resolution (Å) | k_mask (default flat) | k_mask (user, cycle 1) | k_mask (user, later) |
+|---|---|---|---|
+| 14–6.7 | 0.33 | 0.95 | 1.05 |
+| 5.4–4.4 | 0.32 | 0.92 | 1.12 |
+| 2.9–2.4 | 0.00 | 0.98 | 1.12 |
+| 2.4–1.9 | 0.00 | 1.15 | 1.32 |
+| 1.5–1.3 | 0.00 | 1.30 | 1.45 |
+
+k_mask > 1.0 everywhere means the map amplitude was universally undersold by the
+refmac B-factor fitting. The coordinate waters that were patching the blurred-map
+deficit become less necessary, the model simplifies, and R-free improves.
+
+**After phenix refinement with the user solvent, Fo-Fc features in the solvent
+region are genuine missing structure**, not blurring artifacts. These positive-only
+features (no significant negatives, because the protein model is correct) represent
+solvent ordered beyond what the MD trajectory captured. They are the input for
+the next density-editing cycle.
+
+**Convergence criterion:** iterate until solvent-region Fo-Fc features fall below
+~3σ. Track across cycles:
+- k_mask profile: should stabilize (values stop rising)
+- Number of >5σ solvent peaks: should decrease monotonically
+- R-free: should decrease monotonically
+
+**Recommended per-cycle strategy for multi-conformer ensembles:**
+```
+refinement.refine.strategy="individual_sites occupancies"
+```
+with main-chain and side-chain occupancies in separate sum-to-unity groups.
+Omit `individual_adp` (see ADP pathology section above).
+
+**Inspecting the bulk solvent contribution across cycles:**
+Add `output.export_final_f_model=True` to write a `_f_model.mtz` containing
+`FMASK`, `PHIFMASK`, and `K_MASK` columns. Use `wilson_b_fmask.py` to track
+the Wilson B of `k_mask * F_mask` across iterations; rising k_mask and a
+stabilizing Wilson B indicate convergence.
+
 ## Known limitations
 
 - Joint X-ray/neutron refinement path in `validate()` is not wired up
