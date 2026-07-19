@@ -242,8 +242,9 @@ transformation applied to the model.** (An earlier analysis wrongly claimed this
 damps the model and undoes the high-resolution `k_mask`; that is corrected here.)
 Evidence:
 - refmac bare Fcalc (`MODE SFCALC`) matches gemmi Fcalc to relative B = −0.04, flat
-  per shell — only a ~5% overall scale offset from the form-factor table
-  (atomsf.lib Cromer-Mann vs phenix WK1995). No 5 Å² lives in the structure factors.
+  per shell — a flat overall scale offset (~5%) that cancels in R and is NOT form factors
+  (Cromer-Mann vs n_gaussian/it92 differ only 0.08%; later shown FCALC_R = FCALC_P under
+  SHANNON). No 5 Å² lives in the structure factors.
 - refmac's *effective* applied envelope (output `|FC_ALL_LS|` / bare `|model+Fpart|`)
   is FLAT at ~1.00 ±2% across all resolution, not `exp(−5·s²/4)` (which would fall to
   0.27 at 0.96 Å).
@@ -262,7 +263,7 @@ second global Gaussian).
 **Real source of the residual ~0.01 R-free gap:** not an overall B. It is the finer
 scaling/target differences — refmac's ML/σA (Rice) target and per-bin D scaling
 (`k_mask` clamped ≤1.5, `b_ls_part` clamped ≥0, blur-only) vs phenix's unweighted
-per-bin R-minimization, plus the ~5% form-factor scale. No refmac keyword closes it:
+per-bin R-minimization. (Form factors are NOT a factor -- 0.08%.) No refmac keyword closes it:
 `SCAL MLSC FIXB B 0.0` is dead code (`MLBFIX`/`BML_DEFINED` are parsed at
 `rcard_tor1.f:5226-5227` but never read by any scaling routine, and
 `B_LS_OVER_REFINE_FLAG` is never set false). Matching phenix would require patching
@@ -360,10 +361,16 @@ only 31001 have an observed FP):
 Notation: `_P` = phenix column, `_R` = refmac column; per-reflection. All coefficients
 below were fitted from the column data, not asserted.
 
-Bare atomic Fcalc (same model; only the form-factor table differs):
+Bare atomic Fcalc (SHANNON grid; protein Fcalcs AGREE between programs):
 ```
-FCALC_R = 1.045 * FCALC_P        (same phases, <|dphase|>=1.1 deg; relative B = 0)
+FCALC_R ~= FCALC_P               (shell-mean ratio 1.00 at all resolution; R=0.009
+                                  overall = per-reflection ensemble scatter, averages to 1)
 ```
+CORRECTION: an earlier note claimed FCALC_R = 1.045*FCALC_P "form-factor scale". That was
+WRONG -- the 1.045 was the b_add_loc GRID artifact of a default-grid MODE SFCALC run. With
+SHANNON 4-6 the grid artifact is gone and the two protein Fcalcs are equal. The tables the
+programs actually use (phenix n_gaussian, refmac Cromer-Mann/it1992) differ by only 0.08%
+(R), <0.05% per shell even at 0.96 A -- form factors are NEGLIGIBLE, not a cause of anything.
 Bulk solvent (exact; refmac was fed phenix's already-scaled mask):
 ```
 Fpart_R = K_MASK_P * FMASK_P     (complex, exact ratio 1.0000)
@@ -375,7 +382,7 @@ FMODEL_P = K_ISO_P * K_ANISO_P * ( FCALC_P + K_MASK_P * FMASK_P )
 Refmac total model = the column its reported R uses (FC == FC_ALL_LS):
 ```
 FC_ALL_LS_R = FC_R = s_R * ( FCALC_R + Fpart_R )
-                   = s_R * ( 1.045*FCALC_P + K_MASK_P*FMASK_P )
+                   = s_R * ( FCALC_P + K_MASK_P*FMASK_P )   (FCALC_R = FCALC_P, SHANNON grid)
 ```
   s_R = refmac's flat overall scale (~1.0); the log's "B=5" is a Wilson diagnostic,
   NOT applied (effective envelope flat to +/-2%).
@@ -386,10 +393,11 @@ FMODEL_P ~= 0.933 * FC_ALL_LS_R      (relative B = +0.13 ~ 0)
 ```
 Side by side, this isolates the entire source of the R gap:
 ```
-  phenix:  [ K_ISO*K_ANISO ] * ( FCALC       + K_MASK*FMASK )   per-bin env (0.61-1.13)
-  refmac:  [   0.933*s_R    ] * ( 1.045*FCALC + K_MASK*FMASK )   flat env
-                                   ^^^^^ 4.5% on FCALC only, not on solvent
+  phenix:  [ K_ISO*K_ANISO ] * ( FCALC + K_MASK*FMASK )   per-bin env (0.70-1.13)
+  refmac:  [   0.933*s_R    ] * ( FCALC + K_MASK*FMASK )   flat env
 ```
+Same FCALC (form factors negligible, 0.08%); the ONLY difference is phenix's per-bin
+K_ISO*K_ANISO envelope vs refmac's flat scale. That is the whole ~0.008 R-free gap.
 sigmaA/likelihood weighting (refmac's D-factor equals phenix's ALPHA):
 ```
 FC_ALL_R = D_R * FC_ALL_LS_R ,   D_R(bin) ~= ALPHA_P(bin)
@@ -497,12 +505,14 @@ same |Ftotal|.
 Set FC = FMODEL and solve for the partial column:
 ```
    Fpart  =  FMODEL - FCALC_R        (complex; PHIFpart = its phase)
-          =  (K_ISO*K_ANISO - c)*FCALC_P  +  K_ISO*K_ANISO*K_MASK*FMASK
-             \___ model-envelope correction ___/   \____ scaled solvent ____/
+          =  (K_ISO*K_ANISO - 1)*FCALC_P  +  K_ISO*K_ANISO*K_MASK*FMASK
+             \___ per-bin envelope on protein ___/   \____ scaled solvent ____/
 ```
-c ~= 1.045 = WK1995-vs-Cromer-Mann form-factor scale. The partial is NOT physical
-solvent -- it packs everything phenix's per-bin k_iso*k_aniso, k_mask, and form-factor
-choice do that refmac's flat scaling cannot.
+The coefficient on FCALC is ~(K_ISO*K_ANISO - 1), NOT a form-factor scale: FCALC_R = FCALC_P
+(protein Fcalcs agree once the grid is fixed with SHANNON; form-factor tables differ 0.08%).
+So the model-envelope correction is purely phenix's per-bin k_iso*k_aniso deviating from 1
+(range 0.70-1.13). The partial is NOT physical solvent -- it packs phenix's per-bin
+k_iso*k_aniso and k_mask that refmac's flat scaling cannot reproduce.
 
 Three conditions (all now met):
 1. FCALC_R must be reproducible between the model-only run (where it's measured) and the
@@ -550,7 +560,7 @@ Cross-program transfer is a core goal of this project (move solvent/scaling betw
 phenix, and others). Two Fpart columns both make refmac work but mean very different things:
 - ORIGINAL Fpart = K_MASK*FMASK: the physical bulk solvent (user map, k_mask-scaled).
 - DERIVED  Fpart = FMODEL - FCALC_R: solvent PLUS a non-physical correction that packs
-  phenix's per-bin k_iso*k_aniso and the form-factor difference.
+  phenix's per-bin k_iso*k_aniso (form factors are negligible, 0.08%).
   (FCALC_R = refmac's own bare atomic Fcalc from a SHANNON model-only run -- no solvent,
   no scaling; the exact thing refmac recomputes and adds Fpart to.)
 
@@ -569,9 +579,12 @@ effective Wilson B:  original 50.4 A^2 (steep -> diffuse low-res solvent);
 
 - At LOW resolution the two AGREE -- the derived Fpart's low-res content IS the real
   solvent. So a PHYSICAL solvent transfers cleanly between programs (use K_MASK*FMASK).
-- At HIGH resolution they diverge (up to ~10x): the derived tail is NOT solvent, it is
-  (K_ISO*K_ANISO*FCALC_P - FCALC_R), a numerical patch for phenix's per-bin scaling +
-  form-factor choice. It is program-pair- and geometry-specific.
+- At HIGH resolution they diverge (up to ~10x): the derived tail is NOT solvent (FMASK->0),
+  it is ~100% PROTEIN = (K_ISO*K_ANISO - 1)*FCALC_protein -- phenix's per-bin envelope times
+  the protein Fcalc. TESTED: not form factors (protein FCALC_P = FCALC_R to shell-mean 1.00;
+  n_gaussian vs Cromer-Mann only 0.08%) and not the model Fcalc (the programs agree) -- it
+  is purely the per-bin k_iso*k_aniso deviating from 1 (range 0.70-1.13). It is program-pair-
+  and geometry-specific.
 - Transfer guidance: use ORIGINAL Fpart (K_MASK*FMASK) to move a physical solvent model to
   ANY program; use DERIVED Fpart only to make refmac exactly reproduce phenix's score at
   fixed geometry (validation) -- it is not physical and goes stale when coordinates move.
@@ -634,7 +647,7 @@ Clean single-model decomposition (rerefine_003; all loose ends now closed):
 | default grid                        | 0.117 | baseline |
 | + SHANNON 6                         | 0.114 | grid artifact fixed (~0.003 here) |
 | + CIF instead of PDB                | 0.114 | serialization: NO effect on R |
-| derived Fpart (FMODEL-FCALC_R)+SHAN6| 0.107 | per-bin k_iso + form factor (~0.007) |
+| derived Fpart (FMODEL-FCALC_R)+SHAN6| 0.107 | per-bin k_iso envelope (~0.007) |
 | phenix                              | 0.106 | -- |
 
 PDB-vs-CIF serialization is a NON-ISSUE for R: refmac gives identical R (0.1140 PDB vs
