@@ -231,6 +231,10 @@ the common set). So at fixed geometry the rescaling is a detour, not an improvem
 (An earlier note claiming rescaling "closes ~half the gap" was scored against the
 rescaled target and is wrong.) Whether rescaling helps during actual coordinate
 refinement (NCYC>0) is a separate, untested question.
+UPDATE: this pessimism was about that EARLY attempt (extrapolated scales, no SHANNON, and
+scored/back-scaled awkwardly). Done PROPERLY -- exact per-reflection K_ISO*K_ANISO from the
+f_model + physical Fpart + SHANNON 6 -- "Wilsonification" reproduces phenix R-free exactly
+(0.106); see the Wilsonification section below.
 
 **Reflection-set control:** the phenix↔refmac gap is not an artifact of different
 reflection sets. On a common set (phenix's 30985), R-free is phenix 0.106 vs refmac
@@ -552,7 +556,8 @@ Scorecard for transferring phenix scaling into refmac:
 | k_mask (per-bin solvent) | bake into Fpart as K_MASK*FMASK | yes (ratio 1.0000) |
 | grid/b_add_loc artifact | SHANNON 4-6 or Blim 2 | yes (0.122->0.116) |
 | k_isotropic (per-bin total) + everything else | Fpart = FMODEL - FCALC_R + SHANNON | yes, exact at fixed geometry |
-| (Fobs rescaling by K_ISO*K_ANISO alone) | -- | NO: scoring artifact, worse when scored fairly |
+| Wilsonification: Fobs/(K_ISO*K_ANISO) + physical Fpart + SHANNON | data rescale | YES: R-free exact (0.106); PREFERRED (physical solvent, survives NCYC>0) |
+| (early rescale_fobs.py: extrapolated scales, no SHANNON) | -- | failed -- fixed by using exact scales + SHANNON |
 
 ### Derived Fpart vs original (physical) Fpart -- what actually differs
 
@@ -589,11 +594,38 @@ effective Wilson B:  original 50.4 A^2 (steep -> diffuse low-res solvent);
   ANY program; use DERIVED Fpart only to make refmac exactly reproduce phenix's score at
   fixed geometry (validation) -- it is not physical and goes stale when coordinates move.
 
-### Why Fobs-rescaling can never work: the per-reflection discrepancy is in PHENIX's Fcalc
+### Wilsonification: transferring phenix's scaling to refmac via Fobs (THIS WORKS)
 
-Looking at individual HKLs (biggest Fcalc discrepancies), refmac's Fcalc = gemmi's =
-EXACT (ratio 1.000-1.001), and PHENIX's FCALC is the outlier -- it deviates from exact
-bare-atomic by +/-2-6% per reflection, in BOTH directions, even at low resolution:
+Once we established the whole gap is phenix's per-bin K_ISO*K_ANISO envelope (NOT Fcalc,
+form factors, or model), the clean transfer is to divide Fobs by that envelope
+("Wilsonification" -- it straightens the Wilson plot of Fobs) and hand refmac the PHYSICAL
+solvent. CONFIRMED to reproduce phenix:
+```
+  Fobs' = FOBS / (K_ISO*K_ANISO)          (EXACT per-reflection values from the f_model)
+  SIGFP'= SIGFOBS / (K_ISO*K_ANISO)
+  Fpart = K_MASK*FMASK                    (the real bulk solvent -- physical, transferable)
+  refmac: SOLVENT NO ; SHANNON 6 ; NCYC 0
+```
+| run | R-work | R-free | refmac fit |
+|---|---|---|---|
+| refmac Wilsonified + physical Fpart + SHAN6 | 0.0892 | 0.1060 | scale 0.99, B +0.04 |
+| phenix                                       | 0.0880 | 0.1060 | -- |
+
+R-free matches to the digit; R-work off 0.0012 (a 1/(K*K) reweighting). refmac's fitted
+scale is flat (0.99, B~0) because it inherited phenix's per-bin envelope THROUGH the data.
+This BEATS the derived-Fpart trick: the solvent stays physical/transferable, and because it
+is a data transformation (not a geometry-specific patch) it should survive NCYC>0 (refresh
+K_ISO/K_ANISO periodically as the model moves).
+
+Why it works now and rescale_fobs.py did not: (1) EXACT per-reflection K_ISO*K_ANISO from
+the f_model, not extrapolated per-bin k_iso + a fitted aniso tensor; (2) SHANNON 6 so
+refmac does not re-impose the b_add_loc grid B that fought the rescaling.
+
+Aside -- the per-HKL "Fcalc discrepancy" that earlier made this look impossible was a
+PDB-vs-CIF serialization artifact, not real Fcalc error (kept here as a caution):
+refmac's Fcalc = gemmi's = EXACT (ratio 1.000-1.001), and PHENIX's FCALC appeared to be the
+outlier -- it seemed to deviate from exact bare-atomic by +/-2-6% per reflection, in BOTH
+directions, even at low resolution:
 
 | HKL | gemmi(exact) | phenix | refmac | phenix/gemmi | refmac/gemmi |
 |---|---|---|---|---|---|
@@ -622,12 +654,17 @@ self-inflicted -- refmac read the rounded PDB (285.8) while phenix's FMODEL used
 full-precision ensemble (303.75). This is a general gotcha for multi-conformer ensembles:
 the PDB format cannot faithfully serialize many low-occupancy conformers.
 
-Consequence: rescaling Fobs by K_ISO*K_ANISO only fixes the smooth scaling; it cannot
-compensate for a per-reflection difference in the model's Fcalc (up to 6%, both signs).
-No Fobs modification can -- you'd move the target while the model stays wrong per
-reflection. That is the fundamental reason the rescale approach fails. The only thing that
-works is `Fpart = FMODEL - FCALC_R`, which hands refmac phenix's actual (deviating) Fcalc
-via FMODEL rather than trying to reconstruct it from scaling.
+CORRECTED: that apparent Fcalc "discrepancy" was the PDB-vs-CIF serialization, not real
+Fcalc error -- the protein Fcalcs actually AGREE (FCALC_P = FCALC_R). So rescaling Fobs by
+K_ISO*K_ANISO is NOT compensating for a Fcalc difference; it is transferring the ONLY real
+difference (the per-bin envelope), which is exactly why Wilsonification works (top of this
+section). The earlier rescale_fobs.py failed only because it used extrapolated scales and
+no SHANNON -- with exact per-reflection K_ISO*K_ANISO + SHANNON 6 it reproduces phenix.
+
+Two working transfers, use whichever fits:
+- Wilsonification: Fobs/(K_ISO*K_ANISO) + physical Fpart K_MASK*FMASK + SHANNON.
+  Physical, survives refinement (refresh scales as model moves). PREFERRED.
+- Derived Fpart: Fpart = FMODEL - FCALC_R + SHANNON. Fixed-geometry validator only.
 
 ### Is any of phenix's R-free a gridding artifact? No -- the grid artifact was refmac's
 
