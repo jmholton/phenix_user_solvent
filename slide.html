@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>MD-Derived Bulk Solvent in phenix.refine</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    background: #d0d0d0;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+  }
+  .slide {
+    width: 1280px; height: 720px;
+    background: #ffffff;
+    color: #222;
+    padding: 48px 60px 36px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .slide::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, #1a5fa8, #2eaadc, #1a5fa8);
+  }
+
+  h1 {
+    font-size: 30px; font-weight: 700;
+    color: #1a3a5c; letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 20px; color: #5a7a9a; margin-bottom: 28px;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    height: 560px;
+  }
+
+  .panel h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: #1a5fa8;
+    margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 2px solid #e0eaf4;
+  }
+
+  /* R-factor panel */
+  .rfactor-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 16px;
+  }
+  .rfactor-row:last-of-type { border-bottom: none; }
+  .rfactor-label { color: #444; font-size: 24px; flex: 1; }
+  .rfactor-vals { display: flex; gap: 24px; align-items: baseline; }
+  .rfactor-item { text-align: center; }
+  .rfactor-item .cap {
+    font-size: 18px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: #999; display: block; margin-bottom: 2px;
+  }
+  .rfactor-item .val {
+    font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;
+    display: block;
+  }
+  .val.best  { color: #1a8a3a; }
+  .val.mid   { color: #c07000; }
+  .val.worst { color: #b02020; }
+
+  .insight {
+    margin-top: 24px; padding: 14px 16px;
+    background: #f0f6fc;
+    border-left: 4px solid #1a5fa8;
+    border-radius: 0 6px 6px 0;
+    font-size: 18px; line-height: 1.6; color: #2a4a6a;
+  }
+  .insight strong { color: #1a3a5c; }
+
+  .provenance {
+    margin-top: 16px; font-size: 12px; color: #999; line-height: 1.6;
+  }
+
+  /* k_mask table */
+  table { width: 100%; border-collapse: collapse; font-size: 24px; }
+  thead th {
+    color: #1a5fa8; font-weight: 700; font-size: 22px;
+    padding: 0 10px 10px; text-align: right;
+    border-bottom: 2px solid #e0eaf4;
+  }
+  thead th:first-child { text-align: left; }
+  tbody tr:nth-child(even) { background: #f8f9fb; }
+  td {
+    padding: 4px 10px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  td:first-child { text-align: left; color: #555; font-size: 24px; }
+  .zero  { color: #bbb; }
+  .low   { color: #888; }
+  .mid   { color: #c07000; }
+  .high  { color: #1a7a30; font-weight: 600; }
+
+  .footer {
+    position: absolute; bottom: 14px; left: 60px; right: 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: #aaa;
+    border-top: 1px solid #eee; padding-top: 10px;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: #eef4fb; padding: 1px 5px; border-radius: 3px;
+    font-size: 21px; color: #1a5fa8;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <h1>MD-Derived Bulk Solvent in phenix.refine</h1>
+  <div class="subtitle">
+    Patch injects user-supplied F<sub>part</sub>/PHI<sub>part</sub> as F<sub>mask</sub> —
+    per-bin k<sub>mask</sub> replaces Refmac's single global B-factor
+  </div>
+
+  <div class="columns">
+
+    <!-- Left: R-factors + insight -->
+    <div class="panel">
+      <h2>R-factor comparison</h2>
+
+      <div class="rfactor-row">
+        <span class="rfactor-label">Default flat mask</span>
+        <div class="rfactor-vals">
+          <div class="rfactor-item">
+            <span class="cap">R-work</span>
+            <span class="val worst">0.128</span>
+          </div>
+          <div class="rfactor-item">
+            <span class="cap">R-free</span>
+            <span class="val worst">0.147</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rfactor-row">
+        <span class="rfactor-label">MD F<sub>part</sub>, occ=0.02 x48</span>
+        <div class="rfactor-vals">
+          <div class="rfactor-item">
+            <span class="cap">R-work</span>
+            <span class="val mid">0.093</span>
+          </div>
+          <div class="rfactor-item">
+            <span class="cap">R-free</span>
+            <span class="val mid">0.109</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rfactor-row">
+        <span class="rfactor-label">MD F<sub>part</sub>, 3-20 conf model</span>
+        <div class="rfactor-vals">
+          <div class="rfactor-item">
+            <span class="cap">R-work</span>
+            <span class="val best">0.084</span>
+          </div>
+          <div class="rfactor-item">
+            <span class="cap">R-free</span>
+            <span class="val best">0.105</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight">
+        The flat mask contributes <strong>nothing above 3 Å</strong>.
+        Per-bin k<sub>mask</sub> &gt; 1 at high resolution shows the
+        Refmac B-factor had globally undersold the MD map amplitude —
+        low-frequency terms dominated the fit, suppressing the
+        high-resolution solvent signal.
+      </div>
+
+      <div class="provenance">
+        1AHO · 0.96 Å · AMBER explicit-solvent MD → F<sub>part</sub>/PHI<sub>part</sub><br>
+        22 conformer labels (A–V) · 3 tiers: A–C primary (~0.15),
+        D–P secondary (~0.05–0.10), S–V sparse · 544 residues with
+        independently refined backbone and side-chain occupancies
+      </div>
+    </div>
+
+    <!-- Right: k_mask table -->
+    <div class="panel">
+      <h2>k<sub>mask</sub> per resolution bin</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Resolution (Å)</th>
+            <th>flat mask</th>
+            <th>MD F<sub>part</sub></th>
+            <th>iterated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>14 – 6.7</td> <td class="low">0.33</td><td class="mid">0.95</td><td class="high">1.05</td></tr>
+          <tr><td>6.7 – 5.4</td><td class="low">0.33</td><td class="mid">0.95</td><td class="high">1.13</td></tr>
+          <tr><td>5.4 – 4.4</td><td class="low">0.32</td><td class="mid">0.92</td><td class="high">1.12</td></tr>
+          <tr><td>4.4 – 3.6</td><td class="low">0.31</td><td class="mid">0.92</td><td class="high">1.07</td></tr>
+          <tr><td>3.6 – 2.9</td><td class="low">0.24</td><td class="mid">0.95</td><td class="high">1.05</td></tr>
+          <tr><td>2.9 – 2.4</td><td class="zero">0.00</td><td class="mid">0.98</td><td class="high">1.12</td></tr>
+          <tr><td>2.4 – 1.9</td><td class="zero">0.00</td><td class="high">1.15</td><td class="high">1.32</td></tr>
+          <tr><td>1.9 – 1.5</td><td class="zero">0.00</td><td class="high">1.27</td><td class="high">1.45</td></tr>
+          <tr><td>1.5 – 1.3</td><td class="zero">0.00</td><td class="high">1.30</td><td class="high">1.45</td></tr>
+          <tr><td>1.3 – 1.0</td><td class="zero">0.00</td><td class="high">1.27</td><td class="high">1.43</td></tr>
+          <tr><td>1.0 – 0.97</td><td class="zero">0.00</td><td class="high">1.15</td><td class="high">1.22</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <span>github.com/jmholton/phenix_user_solvent</span>
+    <span>patches: phenix_refine.py · f_model.py · __init__.params · minimization.py</span>
+  </div>
+
+</div>
+</body>
+</html>
