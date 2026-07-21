@@ -621,6 +621,25 @@ Why it works now and rescale_fobs.py did not: (1) EXACT per-reflection K_ISO*K_A
 the f_model, not extrapolated per-bin k_iso + a fitted aniso tensor; (2) SHANNON 6 so
 refmac does not re-impose the b_add_loc grid B that fought the rescaling.
 
+The tool: `wilsonify.py <phenix_f_model.mtz> [out.mtz]` builds the Wilsonified MTZ
+(Fobs/(K_ISO*K_ANISO), rescaled sigmas, physical Fpart=K_MASK*FMASK, refmac-convention
+free flag) and prints the LABIN line.
+
+HOLDS UNDER REFINEMENT (NCYC>0). refmac 3-cycle refinement (SHANNON 4, Blim 2, wgt 0.5),
+Wilsonified vs original data (both with physical Fpart):
+| cycle | Wilsonified Rwork/Rfree | Original Rwork/Rfree |
+|---|---|---|
+| 0 | 0.0892/0.1060 | 0.0925/0.1140 |
+| 1 | 0.0887/0.1054 | 0.0923/0.1133 |
+| 2 | 0.0889/0.1048 | 0.0924/0.1126 |
+| 3 | 0.0896/0.1062 | 0.0929/0.1136 |
+Wilsonified stays at phenix-level R-free (~0.105) through refinement; original stays
+~0.008 worse (~0.113) -- the per-bin scaling advantage is maintained as coordinates move,
+not just at NCYC 0. Geometry improves identically (bonds 0.012->0.007). Both keep flat
+overall B (transfer holds). Slight cycle-3 uptick = geometry weight + onset of scale
+staleness; for long runs refresh K_ISO/K_ANISO every few cycles (re-export f_model,
+re-wilsonify).
+
 Aside -- the per-HKL "Fcalc discrepancy" that earlier made this look impossible was a
 PDB-vs-CIF serialization artifact, not real Fcalc error (kept here as a caution):
 refmac's Fcalc = gemmi's = EXACT (ratio 1.000-1.001), and PHENIX's FCALC appeared to be the
