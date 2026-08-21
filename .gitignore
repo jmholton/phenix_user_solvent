@@ -1,0 +1,12 @@
+# large, reproducible run outputs
+squish_phenix/
+rerefine_003_rerun_2.2/
+# refinement byproducts (large / rebuildable)
+*.geo
+*.map
+# build artifacts & caches
+bin/float_func
+__pycache__/
+*.pyc
+# external-data symlink (not for git; "symlinks aren't on tape")
+best_Rfree
