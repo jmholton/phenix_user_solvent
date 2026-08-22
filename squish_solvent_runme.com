@@ -66,6 +66,21 @@ set wilsonify = 1
 set wilsonify_hifrac = 0.2
 set wilsonify_lofrac = 0.25
 
+# resolution filter applied to the difference density before masking (built into
+# the same per-reflection scale the Wilsonification uses):
+#   wilson   = straighten the Wilson plot to the low-res slope (default)
+#   bandpass = Gaussian band-pass in stol^2, centered on the signal band (SNR peak):
+#              H = exp(-(stol^2-bandpass_center)^2 / (2*bandpass_width^2))
+#   blur     = monotonic B-factor rolloff: H = exp(-blur_B*stol^2)
+#   PLANNED (data-driven, need per-shell noise power Pnn=<sigF^2> from $mtzfile):
+#     wiener = Pss/(Pss+Pnn)   (Pss = <|Fdiff|^2>-Pnn)   -- self-tuning band-pass
+#     snr    = Pss/Pnn         (matched filter)
+set resfilter = wilson
+# band-pass centre/width in stol^2 = (sin(theta)/lambda)^2; 0.05 ~ 2.2 A (the 1.9-2.7A SNR peak)
+set bandpass_center = 0.05
+set bandpass_width  = 0.05
+set blur_B = 20
+
 # pre-scale the FOFC map
 set fofc_prescale = 2
 
@@ -637,7 +652,20 @@ echo "fitparams ${map}: $info"
 set newWilsonB = `echo $info | awk '{B=10} $6>B{B=$6} $2>B{B=$2} {print B}'`
 echo "highest Wilson B: $newWilsonB"
 
-awk '$3=="i" && $2>-38{print "s s s",$1*4,exp($2*0.5)}' ${t}table >! ${t}scales.txt
+# ---- build the per-resolution filter (${t}scales.txt lines: "s s s <1/d^2> <H>") ----
+set ssqmax = `echo $reso | awk '{print (0.5/$1)**2}'`
+if( "$resfilter" == "bandpass" ) then
+    echo "resolution filter: band-pass  center(stol^2)=$bandpass_center width=$bandpass_width"
+    awk -v s0=$bandpass_center -v ds=$bandpass_width -v smax=$ssqmax \
+      'BEGIN{n=4000; for(i=0;i<=n;i++){ss=smax*i/n; H=exp(-((ss-s0)*(ss-s0))/(2.0*ds*ds)); print "s s s",ss*4,H}}' >! ${t}scales.txt
+else if( "$resfilter" == "blur" ) then
+    echo "resolution filter: blur  B=$blur_B"
+    awk -v B=$blur_B -v smax=$ssqmax \
+      'BEGIN{n=4000; for(i=0;i<=n;i++){ss=smax*i/n; H=exp(-B*ss); print "s s s",ss*4,H}}' >! ${t}scales.txt
+else
+    # wilson (default): straighten to the low-res slope, from the gnuplot fit above
+    awk '$3=="i" && $2>-38{print "s s s",$1*4,exp($2*0.5)}' ${t}table >! ${t}scales.txt
+endif
  sort -k4g ${t}scales.txt ${t}mtz.hkl |\
 awk '/^s s s /{scale=$5;next}\
   {print $1,$2,$3,$5*scale,$6,scale}' |\
