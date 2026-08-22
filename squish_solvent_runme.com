@@ -64,7 +64,7 @@ set max_pix_grow = 3
 set wilsonify = 1
 # high and low fraction of (sin(theta)/lambda)^2 space to fit to straight lines
 set wilsonify_hifrac = 0.2
-set wilsonify_lofrac = 0.1
+set wilsonify_lofrac = 0.25
 
 # pre-scale the FOFC map
 set fofc_prescale = 2
@@ -569,7 +569,7 @@ awk 'substr($0,1,18)==sprintf("%6d%6d%6d",$1,$2,$3) && $5+0 !~ -999{print}' |\
 tee ${t}mtz.hkl |\
 awk -v pow=$pow '{print $4/4,$5**pow}' |\
 awk -v bs=$binsize '{bin=sprintf("%.0f",$1/bs);sum1[bin]+=$2;++count[bin]}\
-     END{for(bin in sum1) print bin*bs,log(sum1[bin]/count[bin])}' |\
+     END{for(bin in sum1) if(bin+0>0) print bin*bs,log(sum1[bin]/count[bin])}' |\
 sort -g >! wilson_${map}.txt 
 # format: stol^2 log(sumF**2)
 
@@ -685,7 +685,7 @@ awk '/ LIST OF REFLECTIONS/,/ MTZDUMP/' |\
 awk -v pow=$pow 'substr($0,1,18)==sprintf("%6d%6d%6d",$1,$2,$3) && $5+0 !~ -999{\
      print $4/4,$5**pow}' |\
 awk -v bs=$binsize '{bin=sprintf("%.0f",$1/bs);sum1[bin]+=$2;++count[bin]}\
-     END{for(bin in sum1) print bin*bs,log(sum1[bin]/count[bin])}' |\
+     END{for(bin in sum1) if(bin+0>0) print bin*bs,log(sum1[bin]/count[bin])}' |\
 sort -g >! wilsonified_${map}.txt 
 
 end
