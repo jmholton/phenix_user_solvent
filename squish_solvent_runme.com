@@ -662,6 +662,33 @@ else if( "$resfilter" == "blur" ) then
     echo "resolution filter: blur  B=$blur_B"
     awk -v B=$blur_B -v smax=$ssqmax \
       'BEGIN{n=4000; for(i=0;i<=n;i++){ss=smax*i/n; H=exp(-B*ss); print "s s s",ss*4,H}}' >! ${t}scales.txt
+else if( "$resfilter" == "wiener" || "$resfilter" == "snr" ) then
+    echo "resolution filter: $resfilter (data-driven; Pnn=<sigF^2>, Ptot=<|Fdiff|^2>)"
+    # per-shell noise power Pnn=<sigF^2> from the data (map-independent; compute once)
+    if( ! -e ${t}sigma.txt ) then
+        set sighelper = `which sigma_power.py`
+        if( "$sighelper" == "" ) then
+            set BAD = "resfilter=$resfilter needs sigma_power.py and phenix.python in "'$'"path"
+            goto exit
+        endif
+        phenix.python $sighelper $mtzfile $binsize ${t}sigma.txt free=$FreeR_flag sig=$SIGFP >> $logfile
+        if( $status || ! -e ${t}sigma.txt ) then
+            set BAD = "sigma_power.py failed (need phenix.python)"
+            goto exit
+        endif
+    endif
+    # Ptot=exp(wilson log<F^2>) per bin ; H = 1-Pnn/Ptot (wiener) or Pss/Pnn (snr)
+    awk -v mode=$resfilter -v bs=$binsize 'NR==FNR{b=sprintf("%.0f",$1/bs); pnn[b]=$2; next}\
+      {b=sprintf("%.0f",$1/bs); Ptot=exp($2); Pn=pnn[b];\
+       if(Pn==""||Ptot<=0){H=1}\
+       else{ Pss=Ptot-Pn; if(Pss<0)Pss=0;\
+             if(mode=="snr"){H=(Pn>0)?Pss/Pn:0}else{H=Pss/Ptot} }\
+       print "s s s",$1*4,H}' ${t}sigma.txt wilson_${map}.txt >! ${t}scales.txt
+    if( "$resfilter" == "snr" ) then
+        set hmax = `awk '{if($5>m)m=$5} END{print (m>0)?m:1}' ${t}scales.txt`
+        awk -v m=$hmax '{$5=$5/m; print}' ${t}scales.txt >! ${t}scales_n.txt
+        mv ${t}scales_n.txt ${t}scales.txt
+    endif
 else
     # wilson (default): straighten to the low-res slope, from the gnuplot fit above
     awk '$3=="i" && $2>-38{print "s s s",$1*4,exp($2*0.5)}' ${t}table >! ${t}scales.txt
