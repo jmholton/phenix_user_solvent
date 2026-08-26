@@ -10,3 +10,6 @@ __pycache__/
 *.pyc
 # external-data symlink (not for git; "symlinks aren't on tape")
 best_Rfree
+
+# coot session history (auto-generated)
+0-coot-history.*
