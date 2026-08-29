@@ -76,6 +76,14 @@ R as the default run.
 
 **Canonical user vs default solvent comparison (~5 min each):**
 
+**Strategy syntax — use `+`, not a quoted space.** Multiple refinement strategies MUST be
+joined with `+` (`strategy=individual_sites+individual_adp`). The quoted-space form
+`strategy="individual_sites individual_adp"` becomes a single argv token that phil parses
+as one (invalid) choice → *empty* selection → **0 atoms refined** (only bulk-solvent
+scaling runs, R stays flat at the input value). It fails silently: no error, and the log
+shows `individual_sites = False (0 atoms)`. Sanity-check any run with
+`grep "individual_sites .*=" *.log` — it must read `True (N atoms)`.
+
 User solvent (log: `example/usersolvent_001.log`):
 ```
 phenix.refine \
@@ -84,17 +92,20 @@ phenix.refine \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
   refinement.main.number_of_macro_cycles=3 \
-  refinement.refine.strategy="individual_sites individual_adp" \
+  refinement.refine.strategy=individual_sites+individual_adp \
   output.prefix=usersolvent
 ```
-Expected: R-work=0.093, R-free=0.109.
+Expected: R-work≈0.095, R-free≈0.111 (current patch, with the ADP occ-clamp active).
+The reference `example/usersolvent_001.log` value of R-work=0.0928, R-free=0.1092 predates
+the clamp: the clamp caps per-session ADP excursions (final b_max ≈39 vs ≈50 unclamped),
+which costs ~0.002 R here. Removing the clamp reproduces 0.0928/0.1092 exactly.
 
 Default solvent (log: `example/defaultsolvent_001.log`):
 ```
 phenix.refine \
   example/starthere.pdb example/refme.mtz \
   refinement.main.number_of_macro_cycles=3 \
-  refinement.refine.strategy="individual_sites individual_adp" \
+  refinement.refine.strategy=individual_sites+individual_adp \
   output.prefix=defaultsolvent
 ```
 Expected: R-work=0.128, R-free=0.147.
@@ -135,7 +146,7 @@ ill-conditioned gradient for partially-occupied conformers to show a benefit wit
 
 **Recommended strategy for high-copy ensemble refinement:**
 ```
-"refinement.refine.strategy=individual_sites occupancies"
+refinement.refine.strategy=individual_sites+occupancies
 ```
 Omit `individual_adp`. Use 3–10 macro cycles; xyz+occ converges stably.
 The ADP clamp in minimization.py keeps the option open if tighter tuning or
@@ -190,7 +201,7 @@ the next density-editing cycle.
 
 **Recommended per-cycle strategy for multi-conformer ensembles:**
 ```
-refinement.refine.strategy="individual_sites occupancies"
+refinement.refine.strategy=individual_sites+occupancies
 ```
 with main-chain and side-chain occupancies in separate sum-to-unity groups.
 Omit `individual_adp` (see ADP pathology section above).
