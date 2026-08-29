@@ -62,7 +62,7 @@ phenix.refine \
   refinement.input.bulk_solvent_map.amplitudes_label=Fpart \
   refinement.input.bulk_solvent_map.phases_label=PHIpart \
   refinement.main.number_of_macro_cycles=3 \
-  refinement.refine.strategy="individual_sites individual_adp" \
+  refinement.refine.strategy="individual_sites+individual_adp" \
   output.prefix=usersolvent
 ```
 
@@ -73,14 +73,17 @@ phenix.refine \
   example/starthere.pdb \
   example/refme.mtz \
   refinement.main.number_of_macro_cycles=3 \
-  refinement.refine.strategy="individual_sites individual_adp" \
+  refinement.refine.strategy="individual_sites+individual_adp" \
   output.prefix=defaultsolvent
 ```
 
-| Bulk solvent | R-work | R-free |
+| Bulk solvent model | R-work | R-free |
 |---|---|---|
-| Default (flat mask) | 0.128 | 0.147 |
-| Ensemble Fpart/PHIpart | **0.093** | **0.109** |
+| Default flat mask | 0.128 | 0.147 |
+| Ensemble Fpart/PHIpart, cycle 1 | 0.093 | 0.109 |
+| Ensemble Fpart/PHIpart + density editing, iterated | **0.084** | **0.105** |
+
+The improvement compounds across iterations (see [Iterative workflow](#iterative-workflow) below).
 
 ## Applying the patch
 
@@ -129,6 +132,46 @@ patch -p0 < ~/phenix_user_solvent/__init__.params.patch
 > **Note:** All releases contain other files named `phenix_refine.py`
 > (e.g. `phenix/command_line/phenix_refine.py`) that must **not** be patched.
 > The patch targets `phenix/programs/phenix_refine.py` only.
+
+## Iterative workflow
+
+The per-bin `k_mask` in phenix exposes a limitation of preprocessing pipelines
+(e.g. Refmac) that fit a single global B-factor to the MD solvent map. That
+global B-factor blurs the map uniformly, suppressing high-resolution solvent
+content while over-weighting the dominant low-frequency terms. Genuine
+ordered-water peaks are suppressed, appear as Fo-Fc features, and get patched
+with explicit coordinate waters — a compensatory loop that inflates model
+complexity without improving the underlying solvent description.
+
+**phenix breaks this loop.** With `k_mask` fit independently per resolution
+bin, it can correct the resolution-dependent miscalibration:
+
+| Resolution (Å) | k_mask (flat mask) | k_mask (MD Fpart) |
+|---|---|---|
+| 14–6.7 | 0.33 | 1.05 |
+| 5.4–4.4 | 0.32 | 1.12 |
+| 2.9–2.4 | 0.00 | 1.12 |
+| 2.4–1.9 | 0.00 | 1.32 |
+| 1.5–1.3 | 0.00 | 1.45 |
+
+The flat mask contributes nothing above 3 Å. The MD map contributes across
+the full resolution range, with k_mask > 1 at high resolution — meaning the
+global B-factor had undersold the map amplitude there. Once phenix corrects
+each bin independently, the explicit coordinate waters that were patching the
+blurred-map deficit become less necessary, the model simplifies, and R-free
+improves further.
+
+**After phenix refinement, any remaining Fo-Fc features in the solvent are
+genuine missing structure**, not blurring artifacts. These become input for the
+next density-editing cycle. The recommended iteration is:
+
+1. Refine with user solvent map (`individual_sites occupancies`, 3–10 cycles)
+2. Inspect Fo-Fc map (`output.export_final_f_model=True` to get `FMASK` and `K_MASK`)
+3. Density-edit: add positive solvent blobs back into the solvent MTZ
+4. Repeat from step 1 until solvent-region Fo-Fc features fall below ~3σ
+
+Convergence indicators: k_mask profile stabilizes; number of >5σ solvent peaks
+decreases monotonically; R-free decreases monotonically.
 
 ## Implementation notes
 
